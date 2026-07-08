@@ -289,10 +289,10 @@ function HeroCanvas() {
                   </div>
                   <div>
                     <div className="text-[12.5px] font-medium">{t.hero.chatHeader}</div>
-                    <div className="text-[10.5px] text-muted-foreground">online</div>
+                    <div className="text-[11px] text-muted-foreground">online</div>
                   </div>
                 </div>
-                <span className="rounded-full border border-border/60 bg-surface px-2 py-0.5 text-[10px] text-muted-foreground">
+                <span className="rounded-full border border-border/60 bg-surface px-2 py-0.5 text-[11px] text-muted-foreground">
                   ZurplexAI
                 </span>
               </div>
@@ -321,9 +321,9 @@ function HeroCanvas() {
               <div className="mb-4 flex items-center justify-between">
                 <div>
                   <div className="text-[12.5px] font-medium">{t.hero.dashTitle}</div>
-                  <div className="text-[10.5px] text-muted-foreground">Nov · 2025</div>
+                  <div className="text-[11px] text-muted-foreground">Nov · 2025</div>
                 </div>
-                <span className="flex items-center gap-1.5 rounded-md border border-border/60 bg-surface px-2 py-1 text-[10.5px] text-muted-foreground">
+                <span className="flex items-center gap-1.5 rounded-md border border-border/60 bg-surface px-2 py-1 text-[11px] text-muted-foreground">
                   <span className="h-1.5 w-1.5 rounded-full bg-success" />
                   {t.hero.live}
                 </span>
@@ -389,8 +389,8 @@ function MetricCard({
   return (
     <div className="rounded-md border border-border/70 bg-surface/70 p-3">
       <div className="flex items-center justify-between">
-        <div className="text-[10.5px] uppercase tracking-wide text-muted-foreground">{label}</div>
-        <div className={`text-[10.5px] font-medium ${color}`}>{delta}</div>
+        <div className="text-[11px] uppercase tracking-wide text-muted-foreground">{label}</div>
+        <div className={`text-[11px] font-medium ${color}`}>{delta}</div>
       </div>
       <div className={`mt-1 font-mono text-[15px] tracking-tight ${color}`}>{value}</div>
       <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-border/60">
@@ -422,7 +422,7 @@ function SystemSection() {
         <div className="mt-16 grid grid-cols-1 gap-px overflow-hidden rounded-xl border border-border/70 bg-border/70 md:grid-cols-3">
           {t.system.cards.map((c, i) => (
             <div key={c.title} className="bg-background p-8 transition-colors hover:bg-surface/60">
-              <div className="flex h-9 w-9 items-center justify-center rounded-md border border-border/70 bg-surface font-mono text-[12px] text-primary">
+              <div className="flex h-9 w-9 items-center justify-center rounded-md border border-border/70 bg-surface font-mono text-[12px] text-accent-sky">
                 0{i + 1}
               </div>
               <h3 className="mt-6 text-[16px] font-medium tracking-tight">{c.title}</h3>
@@ -455,7 +455,7 @@ function HowItWorks() {
           {t.how.steps.map((step, i) => (
             <div key={i} className="relative rounded-xl border border-border/70 bg-surface/50 p-6">
               <div className="flex items-center justify-between">
-                <div className="flex h-8 w-8 items-center justify-center rounded-md border border-border/70 bg-background font-mono text-[12px] text-primary">
+                <div className="flex h-8 w-8 items-center justify-center rounded-md border border-border/70 bg-background font-mono text-[12px] text-accent-sky">
                   {i + 1}
                 </div>
                 {i < 3 && (
