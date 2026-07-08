@@ -109,7 +109,36 @@
     background-color: color-mix(in oklab, var(--primary) 35%, transparent);
     color: var(--foreground);
   }
+
+  /* Accessibility: visible keyboard focus */
+  *:focus {
+    outline: none;
+  }
+  *:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Skip-link */
+  .skip-link {
+    position: absolute;
+    top: -100px;
+    left: 1rem;
+    z-index: 100;
+    padding: 0.5rem 0.875rem;
+    border-radius: 6px;
+    background: var(--primary);
+    color: var(--primary-foreground);
+    font-size: 13px;
+    font-weight: 500;
+    transition: top 0.15s ease;
+  }
+  .skip-link:focus-visible {
+    top: 0.75rem;
+  }
 }
+
 
 @layer utilities {
   .text-balance {
