@@ -206,20 +206,21 @@ function HeroCanvas() {
       <div className="rounded-xl border border-border/80 bg-surface/70 p-2 shadow-[0_1px_0_0_rgba(255,255,255,0.04)_inset,0_30px_80px_-30px_rgba(37,99,235,0.25)] backdrop-blur">
         <div className="overflow-hidden rounded-lg border border-border/70 bg-background">
           {/* browser chrome */}
-          <div className="flex items-center justify-between border-b border-border/60 px-4 py-2.5">
-            <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-2 border-b border-border/60 px-3 py-2.5 sm:px-4">
+            <div className="flex shrink-0 items-center gap-1.5">
               <div className="h-2.5 w-2.5 rounded-full bg-border" />
               <div className="h-2.5 w-2.5 rounded-full bg-border" />
               <div className="h-2.5 w-2.5 rounded-full bg-border" />
             </div>
-            <div className="rounded-md border border-border/60 bg-surface px-2.5 py-1 text-[11px] text-muted-foreground">
+            <div className="mx-auto hidden min-w-0 max-w-[60%] truncate rounded-md border border-border/60 bg-surface px-2.5 py-1 text-[11px] text-muted-foreground sm:block">
               {t.hero.url}
             </div>
-            <div className="flex items-center gap-1.5 rounded-md border border-border/60 bg-surface px-2 py-1 text-[11px] text-muted-foreground">
+            <div className="ml-auto flex shrink-0 items-center gap-1.5 rounded-md border border-border/60 bg-surface px-2 py-1 text-[11px] text-muted-foreground">
               <span className="h-1.5 w-1.5 rounded-full bg-success" />
               {t.hero.live}
             </div>
           </div>
+
 
           <div className="grid grid-cols-1 gap-0 md:grid-cols-2">
             {/* WhatsApp panel */}
