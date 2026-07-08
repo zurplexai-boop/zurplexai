@@ -68,7 +68,16 @@ type Dict = {
     terms: string;
     status: string;
   };
+  a11y: {
+    skipToContent: string;
+    languageSwitcher: string;
+    selectLanguage: string;
+    currentLanguage: string;
+    openMenu: string;
+    closeMenu: string;
+  };
 };
+
 
 const linkedins = [
   "https://www.linkedin.com/in/agustinmarteau/",
