@@ -15,10 +15,14 @@ export const Route = createFileRoute("/")({
 });
 
 function Landing() {
+  const { t } = useI18n();
   return (
     <div className="min-h-screen bg-background text-foreground font-sans antialiased">
+      <a href="#main" className="skip-link">
+        {t.a11y?.skipToContent ?? "Saltar al contenido"}
+      </a>
       <Nav />
-      <main>
+      <main id="main" tabIndex={-1}>
         <Hero />
         <SystemSection />
         <HowItWorks />
@@ -31,6 +35,7 @@ function Landing() {
     </div>
   );
 }
+
 
 /* ---------- LANGUAGE SWITCHER ---------- */
 
