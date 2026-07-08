@@ -15,10 +15,15 @@ export const Route = createFileRoute("/")({
 });
 
 function Landing() {
+  const { t } = useI18n();
   return (
     <div className="min-h-screen bg-background text-foreground font-sans antialiased">
+      <a href="#main" className="skip-link">
+        {t.a11y.skipToContent}
+      </a>
+
       <Nav />
-      <main>
+      <main id="main" tabIndex={-1}>
         <Hero />
         <SystemSection />
         <HowItWorks />
@@ -32,36 +37,81 @@ function Landing() {
   );
 }
 
+
 /* ---------- LANGUAGE SWITCHER ---------- */
 
 function LanguageSwitcher() {
-  const { lang, setLang } = useI18n();
+  const { lang, setLang, t } = useI18n();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
   const current = LANGS.find((l) => l.code === lang)!;
 
   useEffect(() => {
     function onClick(e: MouseEvent) {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
     }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape" && open) {
+        setOpen(false);
+        btnRef.current?.focus();
+      }
+    }
     document.addEventListener("mousedown", onClick);
-    return () => document.removeEventListener("mousedown", onClick);
-  }, []);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onClick);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  useEffect(() => {
+    if (open) {
+      const first = listRef.current?.querySelector<HTMLButtonElement>('[role="option"]');
+      first?.focus();
+    }
+  }, [open]);
+
+  function handleListKey(e: React.KeyboardEvent<HTMLDivElement>) {
+    const items = Array.from(
+      listRef.current?.querySelectorAll<HTMLButtonElement>('[role="option"]') ?? [],
+    );
+    const idx = items.findIndex((el) => el === document.activeElement);
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      items[(idx + 1) % items.length]?.focus();
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      items[(idx - 1 + items.length) % items.length]?.focus();
+    } else if (e.key === "Home") {
+      e.preventDefault();
+      items[0]?.focus();
+    } else if (e.key === "End") {
+      e.preventDefault();
+      items[items.length - 1]?.focus();
+    }
+  }
 
   return (
     <div ref={ref} className="relative">
       <button
+        ref={btnRef}
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex h-9 items-center gap-1.5 rounded-md border border-border/80 bg-surface/60 px-2.5 text-[12.5px] font-medium text-muted-foreground transition-colors hover:text-foreground"
+        className="inline-flex h-9 items-center gap-1.5 rounded-md border border-border/80 bg-surface/60 px-2.5 text-[12.5px] font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:text-foreground"
         aria-haspopup="listbox"
         aria-expanded={open}
+        aria-label={`${t.a11y.languageSwitcher}. ${t.a11y.currentLanguage}: ${current.label}`}
       >
-        <Globe className="h-3.5 w-3.5" />
+        <Globe className="h-3.5 w-3.5" aria-hidden="true" />
         <span className="hidden sm:inline">{current.short}</span>
       </button>
       {open && (
         <div
+          ref={listRef}
           role="listbox"
+          aria-label={t.a11y.selectLanguage}
+          onKeyDown={handleListKey}
           className="absolute right-0 top-11 z-50 w-44 overflow-hidden rounded-md border border-border/80 bg-surface shadow-[0_20px_50px_-20px_rgba(0,0,0,0.6)]"
         >
           {LANGS.map((l) => {
@@ -71,21 +121,25 @@ function LanguageSwitcher() {
                 key={l.code}
                 role="option"
                 aria-selected={active}
+                lang={l.code}
                 onClick={() => {
                   setLang(l.code as Lang);
                   setOpen(false);
+                  btnRef.current?.focus();
                 }}
-                className={`flex w-full items-center justify-between px-3 py-2 text-left text-[13px] transition-colors ${
+                className={`flex w-full items-center justify-between px-3 py-2 text-left text-[13px] transition-colors focus-visible:bg-card focus-visible:text-foreground ${
                   active
                     ? "bg-primary/10 text-foreground"
                     : "text-muted-foreground hover:bg-card hover:text-foreground"
                 }`}
               >
                 <span className="flex items-center gap-2">
-                  <span className="font-mono text-[11px] text-muted-foreground">{l.short}</span>
+                  <span className="font-mono text-[11px] text-muted-foreground" aria-hidden="true">
+                    {l.short}
+                  </span>
                   {l.label}
                 </span>
-                {active && <Check className="h-3.5 w-3.5 text-primary" />}
+                {active && <Check className="h-3.5 w-3.5 text-primary" aria-hidden="true" />}
               </button>
             );
           })}
@@ -94,6 +148,7 @@ function LanguageSwitcher() {
     </div>
   );
 }
+
 
 /* ---------- NAV ---------- */
 

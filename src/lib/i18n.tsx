@@ -68,7 +68,16 @@ type Dict = {
     terms: string;
     status: string;
   };
+  a11y: {
+    skipToContent: string;
+    languageSwitcher: string;
+    selectLanguage: string;
+    currentLanguage: string;
+    openMenu: string;
+    closeMenu: string;
+  };
 };
+
 
 const linkedins = [
   "https://www.linkedin.com/in/agustinmarteau/",
@@ -187,7 +196,16 @@ const es: Dict = {
     terms: "Términos",
     status: "Todos los sistemas operativos",
   },
+  a11y: {
+    skipToContent: "Saltar al contenido principal",
+    languageSwitcher: "Selector de idioma",
+    selectLanguage: "Seleccionar idioma",
+    currentLanguage: "Idioma actual",
+    openMenu: "Abrir menú",
+    closeMenu: "Cerrar menú",
+  },
 };
+
 
 const pt: Dict = {
   nav: {
@@ -300,7 +318,16 @@ const pt: Dict = {
     terms: "Termos",
     status: "Todos os sistemas operacionais",
   },
+  a11y: {
+    skipToContent: "Pular para o conteúdo principal",
+    languageSwitcher: "Seletor de idioma",
+    selectLanguage: "Selecionar idioma",
+    currentLanguage: "Idioma atual",
+    openMenu: "Abrir menu",
+    closeMenu: "Fechar menu",
+  },
 };
+
 
 const dicts: Record<Lang, Dict> = { es, pt };
 
