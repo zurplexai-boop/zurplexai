@@ -107,10 +107,10 @@ function Nav() {
   ];
   return (
     <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-xl">
-      <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6">
-        <Link to="/" className="flex items-center gap-2.5">
+      <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-3 px-4 sm:px-6">
+        <Link to="/" className="flex min-w-0 items-center gap-2.5">
           <LogoMark />
-          <span className="text-[15px] font-semibold tracking-tight">ZurplexAI</span>
+          <span className="truncate text-[15px] font-semibold tracking-tight">ZurplexAI</span>
         </Link>
         <nav className="hidden items-center gap-8 md:flex">
           {links.map((l) => (
@@ -123,7 +123,7 @@ function Nav() {
             </a>
           ))}
         </nav>
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2">
           <LanguageSwitcher />
           <a
             href="#"
@@ -133,12 +133,14 @@ function Nav() {
           </a>
           <a
             href="#cta"
-            className="inline-flex h-9 items-center gap-1.5 rounded-md bg-primary px-3.5 text-[13px] font-medium text-primary-foreground transition-colors hover:bg-primary-hover"
+            className="inline-flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-[13px] font-medium text-primary-foreground transition-colors hover:bg-primary-hover sm:px-3.5"
           >
-            {t.nav.contactSales}
+            <span className="hidden sm:inline">{t.nav.contactSales}</span>
+            <span className="sm:hidden">{t.nav.contactSales.split(" ")[0]}</span>
             <ArrowRight className="h-3.5 w-3.5" />
           </a>
         </div>
+
       </div>
     </header>
   );
