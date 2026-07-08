@@ -163,7 +163,7 @@ function Hero() {
     <section className="relative overflow-hidden border-b border-border/60">
       <div className="absolute inset-0 bg-grid opacity-[0.35] [mask-image:radial-gradient(ellipse_at_top,black_20%,transparent_70%)]" />
       <div className="absolute inset-x-0 top-0 h-[560px] bg-radial-glow opacity-70" />
-      <div className="relative mx-auto max-w-7xl px-6 pb-20 pt-14 md:pb-28 md:pt-32">
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 pb-20 pt-14 md:pb-28 md:pt-32">
         <div className="mx-auto max-w-3xl text-center">
           <span className="inline-flex items-center gap-2 rounded-full border border-border/80 bg-surface/60 px-3 py-1 text-[12px] text-muted-foreground backdrop-blur">
             <span className="h-1.5 w-1.5 rounded-full bg-accent-sky" />
@@ -351,7 +351,7 @@ function SystemSection() {
   const { t } = useI18n();
   return (
     <section id="product" className="border-b border-border/60">
-      <div className="mx-auto max-w-7xl px-6 py-16 md:py-28">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-16 md:py-28">
         <div className="max-w-2xl">
           <div className="text-[12px] uppercase tracking-[0.18em] text-muted-foreground">
             {t.system.kicker}
@@ -386,7 +386,7 @@ function HowItWorks() {
   const { t } = useI18n();
   return (
     <section id="how" className="border-b border-border/60">
-      <div className="mx-auto max-w-7xl px-6 py-16 md:py-28">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-16 md:py-28">
         <div className="max-w-2xl">
           <div className="text-[12px] uppercase tracking-[0.18em] text-muted-foreground">
             {t.how.kicker}
@@ -422,7 +422,7 @@ function Stats() {
   const { t } = useI18n();
   return (
     <section className="border-b border-border/60">
-      <div className="mx-auto max-w-7xl px-6 py-16 md:py-24">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-16 md:py-24">
         <div className="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-border/70 bg-border/70 md:grid-cols-4">
           {t.stats.items.map((s) => (
             <div key={s.l} className="bg-background p-8">
@@ -444,7 +444,7 @@ function ForWho() {
   const { t } = useI18n();
   return (
     <section id="for-who" className="border-b border-border/60">
-      <div className="mx-auto max-w-7xl px-6 py-16 md:py-28">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-16 md:py-28">
         <div className="max-w-3xl">
           <div className="text-[12px] uppercase tracking-[0.18em] text-muted-foreground">
             {t.who.kicker}
@@ -479,7 +479,7 @@ function Team() {
   const { t } = useI18n();
   return (
     <section id="team" className="border-b border-border/60">
-      <div className="mx-auto max-w-7xl px-6 py-16 md:py-28">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-16 md:py-28">
         <div className="max-w-2xl">
           <div className="text-[12px] uppercase tracking-[0.18em] text-muted-foreground">
             {t.team.kicker}
@@ -528,7 +528,7 @@ function CTA() {
   return (
     <section id="cta" className="relative overflow-hidden border-b border-border/60">
       <div className="absolute inset-0 bg-grid opacity-[0.25] [mask-image:radial-gradient(ellipse_at_center,black_10%,transparent_65%)]" />
-      <div className="relative mx-auto max-w-4xl px-6 py-14 md:py-20 md:py-32 text-center">
+      <div className="relative mx-auto max-w-4xl px-4 sm:px-6 py-14 md:py-20 md:py-32 text-center">
         <h2 className="text-balance text-4xl font-semibold tracking-tight sm:text-5xl md:text-6xl">
           {t.cta.title}
         </h2>
@@ -561,7 +561,7 @@ function Footer() {
   const { t } = useI18n();
   return (
     <footer className="bg-background">
-      <div className="mx-auto max-w-7xl px-6 py-14 md:py-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-14 md:py-20">
         <div className="grid grid-cols-2 gap-10 md:grid-cols-5">
           <div className="col-span-2">
             <div className="flex items-center gap-2.5">
