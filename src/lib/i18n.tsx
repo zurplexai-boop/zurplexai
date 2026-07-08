@@ -318,7 +318,16 @@ const pt: Dict = {
     terms: "Termos",
     status: "Todos os sistemas operacionais",
   },
+  a11y: {
+    skipToContent: "Pular para o conteúdo principal",
+    languageSwitcher: "Seletor de idioma",
+    selectLanguage: "Selecionar idioma",
+    currentLanguage: "Idioma atual",
+    openMenu: "Abrir menu",
+    closeMenu: "Fechar menu",
+  },
 };
+
 
 const dicts: Record<Lang, Dict> = { es, pt };
 
