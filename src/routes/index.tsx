@@ -19,8 +19,9 @@ function Landing() {
   return (
     <div className="min-h-screen bg-background text-foreground font-sans antialiased">
       <a href="#main" className="skip-link">
-        {t.a11y?.skipToContent ?? "Saltar al contenido"}
+        {t.a11y.skipToContent}
       </a>
+
       <Nav />
       <main id="main" tabIndex={-1}>
         <Hero />
