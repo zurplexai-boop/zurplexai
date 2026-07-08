@@ -196,7 +196,16 @@ const es: Dict = {
     terms: "Términos",
     status: "Todos los sistemas operativos",
   },
+  a11y: {
+    skipToContent: "Saltar al contenido principal",
+    languageSwitcher: "Selector de idioma",
+    selectLanguage: "Seleccionar idioma",
+    currentLanguage: "Idioma actual",
+    openMenu: "Abrir menú",
+    closeMenu: "Cerrar menú",
+  },
 };
+
 
 const pt: Dict = {
   nav: {
