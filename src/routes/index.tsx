@@ -107,10 +107,10 @@ function Nav() {
   ];
   return (
     <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-xl">
-      <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6">
-        <Link to="/" className="flex items-center gap-2.5">
+      <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-3 px-4 sm:px-6">
+        <Link to="/" className="flex min-w-0 items-center gap-2.5">
           <LogoMark />
-          <span className="text-[15px] font-semibold tracking-tight">ZurplexAI</span>
+          <span className="truncate text-[15px] font-semibold tracking-tight">ZurplexAI</span>
         </Link>
         <nav className="hidden items-center gap-8 md:flex">
           {links.map((l) => (
@@ -123,7 +123,7 @@ function Nav() {
             </a>
           ))}
         </nav>
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2">
           <LanguageSwitcher />
           <a
             href="#"
@@ -133,12 +133,14 @@ function Nav() {
           </a>
           <a
             href="#cta"
-            className="inline-flex h-9 items-center gap-1.5 rounded-md bg-primary px-3.5 text-[13px] font-medium text-primary-foreground transition-colors hover:bg-primary-hover"
+            className="inline-flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-[13px] font-medium text-primary-foreground transition-colors hover:bg-primary-hover sm:px-3.5"
           >
-            {t.nav.contactSales}
+            <span className="hidden sm:inline">{t.nav.contactSales}</span>
+            <span className="sm:hidden">{t.nav.contactSales.split(" ")[0]}</span>
             <ArrowRight className="h-3.5 w-3.5" />
           </a>
         </div>
+
       </div>
     </header>
   );
@@ -161,14 +163,14 @@ function Hero() {
     <section className="relative overflow-hidden border-b border-border/60">
       <div className="absolute inset-0 bg-grid opacity-[0.35] [mask-image:radial-gradient(ellipse_at_top,black_20%,transparent_70%)]" />
       <div className="absolute inset-x-0 top-0 h-[560px] bg-radial-glow opacity-70" />
-      <div className="relative mx-auto max-w-7xl px-6 pb-28 pt-24 md:pt-32">
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 pb-20 pt-14 md:pb-28 md:pt-32">
         <div className="mx-auto max-w-3xl text-center">
           <span className="inline-flex items-center gap-2 rounded-full border border-border/80 bg-surface/60 px-3 py-1 text-[12px] text-muted-foreground backdrop-blur">
             <span className="h-1.5 w-1.5 rounded-full bg-accent-sky" />
             {t.hero.badge}
             <ArrowUpRight className="h-3 w-3" />
           </span>
-          <h1 className="mt-8 text-balance text-5xl font-semibold leading-[1.05] tracking-tight md:text-7xl">
+          <h1 className="mt-8 text-balance text-4xl font-semibold leading-[1.05] tracking-tight sm:text-5xl md:text-7xl">
             {t.hero.title}
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-balance text-[17px] leading-relaxed text-muted-foreground">
@@ -200,24 +202,25 @@ function Hero() {
 function HeroCanvas() {
   const { t } = useI18n();
   return (
-    <div className="relative mx-auto mt-20 max-w-5xl">
+    <div className="relative mx-auto mt-12 max-w-5xl md:mt-20">
       <div className="rounded-xl border border-border/80 bg-surface/70 p-2 shadow-[0_1px_0_0_rgba(255,255,255,0.04)_inset,0_30px_80px_-30px_rgba(37,99,235,0.25)] backdrop-blur">
         <div className="overflow-hidden rounded-lg border border-border/70 bg-background">
           {/* browser chrome */}
-          <div className="flex items-center justify-between border-b border-border/60 px-4 py-2.5">
-            <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-2 border-b border-border/60 px-3 py-2.5 sm:px-4">
+            <div className="flex shrink-0 items-center gap-1.5">
               <div className="h-2.5 w-2.5 rounded-full bg-border" />
               <div className="h-2.5 w-2.5 rounded-full bg-border" />
               <div className="h-2.5 w-2.5 rounded-full bg-border" />
             </div>
-            <div className="rounded-md border border-border/60 bg-surface px-2.5 py-1 text-[11px] text-muted-foreground">
+            <div className="mx-auto hidden min-w-0 max-w-[60%] truncate rounded-md border border-border/60 bg-surface px-2.5 py-1 text-[11px] text-muted-foreground sm:block">
               {t.hero.url}
             </div>
-            <div className="flex items-center gap-1.5 rounded-md border border-border/60 bg-surface px-2 py-1 text-[11px] text-muted-foreground">
+            <div className="ml-auto flex shrink-0 items-center gap-1.5 rounded-md border border-border/60 bg-surface px-2 py-1 text-[11px] text-muted-foreground">
               <span className="h-1.5 w-1.5 rounded-full bg-success" />
               {t.hero.live}
             </div>
           </div>
+
 
           <div className="grid grid-cols-1 gap-0 md:grid-cols-2">
             {/* WhatsApp panel */}
@@ -348,12 +351,12 @@ function SystemSection() {
   const { t } = useI18n();
   return (
     <section id="product" className="border-b border-border/60">
-      <div className="mx-auto max-w-7xl px-6 py-28">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-16 md:py-28">
         <div className="max-w-2xl">
           <div className="text-[12px] uppercase tracking-[0.18em] text-muted-foreground">
             {t.system.kicker}
           </div>
-          <h2 className="mt-4 text-balance text-4xl font-semibold tracking-tight md:text-5xl">
+          <h2 className="mt-4 text-balance text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl">
             {t.system.title}
           </h2>
           <p className="mt-5 max-w-xl text-[16px] leading-relaxed text-muted-foreground">
@@ -383,12 +386,12 @@ function HowItWorks() {
   const { t } = useI18n();
   return (
     <section id="how" className="border-b border-border/60">
-      <div className="mx-auto max-w-7xl px-6 py-28">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-16 md:py-28">
         <div className="max-w-2xl">
           <div className="text-[12px] uppercase tracking-[0.18em] text-muted-foreground">
             {t.how.kicker}
           </div>
-          <h2 className="mt-4 text-balance text-4xl font-semibold tracking-tight md:text-5xl">
+          <h2 className="mt-4 text-balance text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl">
             {t.how.title}
           </h2>
         </div>
@@ -419,7 +422,7 @@ function Stats() {
   const { t } = useI18n();
   return (
     <section className="border-b border-border/60">
-      <div className="mx-auto max-w-7xl px-6 py-24">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-16 md:py-24">
         <div className="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-border/70 bg-border/70 md:grid-cols-4">
           {t.stats.items.map((s) => (
             <div key={s.l} className="bg-background p-8">
@@ -441,12 +444,12 @@ function ForWho() {
   const { t } = useI18n();
   return (
     <section id="for-who" className="border-b border-border/60">
-      <div className="mx-auto max-w-7xl px-6 py-28">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-16 md:py-28">
         <div className="max-w-3xl">
           <div className="text-[12px] uppercase tracking-[0.18em] text-muted-foreground">
             {t.who.kicker}
           </div>
-          <h2 className="mt-4 text-balance text-4xl font-semibold tracking-tight md:text-5xl">
+          <h2 className="mt-4 text-balance text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl">
             {t.who.title}
           </h2>
           <p className="mt-5 text-[16px] leading-relaxed text-muted-foreground">
@@ -476,12 +479,12 @@ function Team() {
   const { t } = useI18n();
   return (
     <section id="team" className="border-b border-border/60">
-      <div className="mx-auto max-w-7xl px-6 py-28">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-16 md:py-28">
         <div className="max-w-2xl">
           <div className="text-[12px] uppercase tracking-[0.18em] text-muted-foreground">
             {t.team.kicker}
           </div>
-          <h2 className="mt-4 text-balance text-4xl font-semibold tracking-tight md:text-5xl">
+          <h2 className="mt-4 text-balance text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl">
             {t.team.title}
           </h2>
         </div>
@@ -525,8 +528,8 @@ function CTA() {
   return (
     <section id="cta" className="relative overflow-hidden border-b border-border/60">
       <div className="absolute inset-0 bg-grid opacity-[0.25] [mask-image:radial-gradient(ellipse_at_center,black_10%,transparent_65%)]" />
-      <div className="relative mx-auto max-w-4xl px-6 py-32 text-center">
-        <h2 className="text-balance text-5xl font-semibold tracking-tight md:text-6xl">
+      <div className="relative mx-auto max-w-4xl px-4 sm:px-6 py-14 md:py-20 md:py-32 text-center">
+        <h2 className="text-balance text-4xl font-semibold tracking-tight sm:text-5xl md:text-6xl">
           {t.cta.title}
         </h2>
         <p className="mx-auto mt-6 max-w-lg text-[16px] leading-relaxed text-muted-foreground">
@@ -558,7 +561,7 @@ function Footer() {
   const { t } = useI18n();
   return (
     <footer className="bg-background">
-      <div className="mx-auto max-w-7xl px-6 py-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-14 md:py-20">
         <div className="grid grid-cols-2 gap-10 md:grid-cols-5">
           <div className="col-span-2">
             <div className="flex items-center gap-2.5">
