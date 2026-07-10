@@ -21,6 +21,7 @@ import { Route as AppDashboardRouteImport } from './routes/app.dashboard'
 import { Route as AppCustomersRouteImport } from './routes/app.customers'
 import { Route as AppCostsExpensesRouteImport } from './routes/app.costs-expenses'
 import { Route as AppAutomationsRouteImport } from './routes/app.automations'
+import { Route as AppAlertsRouteImport } from './routes/app.alerts'
 
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
@@ -82,12 +83,18 @@ const AppAutomationsRoute = AppAutomationsRouteImport.update({
   path: '/automations',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAlertsRoute = AppAlertsRouteImport.update({
+  id: '/alerts',
+  path: '/alerts',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
+  '/app/alerts': typeof AppAlertsRoute
   '/app/automations': typeof AppAutomationsRoute
   '/app/costs-expenses': typeof AppCostsExpensesRoute
   '/app/customers': typeof AppCustomersRoute
@@ -101,6 +108,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
+  '/app/alerts': typeof AppAlertsRoute
   '/app/automations': typeof AppAutomationsRoute
   '/app/costs-expenses': typeof AppCostsExpensesRoute
   '/app/customers': typeof AppCustomersRoute
@@ -116,6 +124,7 @@ export interface FileRoutesById {
   '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
+  '/app/alerts': typeof AppAlertsRoute
   '/app/automations': typeof AppAutomationsRoute
   '/app/costs-expenses': typeof AppCostsExpensesRoute
   '/app/customers': typeof AppCustomersRoute
@@ -132,6 +141,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/login'
     | '/onboarding'
+    | '/app/alerts'
     | '/app/automations'
     | '/app/costs-expenses'
     | '/app/customers'
@@ -145,6 +155,7 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/onboarding'
+    | '/app/alerts'
     | '/app/automations'
     | '/app/costs-expenses'
     | '/app/customers'
@@ -159,6 +170,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/login'
     | '/onboarding'
+    | '/app/alerts'
     | '/app/automations'
     | '/app/costs-expenses'
     | '/app/customers'
@@ -262,10 +274,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAutomationsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/alerts': {
+      id: '/app/alerts'
+      path: '/alerts'
+      fullPath: '/app/alerts'
+      preLoaderRoute: typeof AppAlertsRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
 interface AppRouteChildren {
+  AppAlertsRoute: typeof AppAlertsRoute
   AppAutomationsRoute: typeof AppAutomationsRoute
   AppCostsExpensesRoute: typeof AppCostsExpensesRoute
   AppCustomersRoute: typeof AppCustomersRoute
@@ -277,6 +297,7 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAlertsRoute: AppAlertsRoute,
   AppAutomationsRoute: AppAutomationsRoute,
   AppCostsExpensesRoute: AppCostsExpensesRoute,
   AppCustomersRoute: AppCustomersRoute,
