@@ -591,19 +591,19 @@ function CTA() {
           {t.cta.subtitle}
         </p>
         <div className="mt-10 flex items-center justify-center gap-3">
-          <a
-            href="#"
+          <Link
+            to="/onboarding"
             className="inline-flex h-11 items-center gap-2 rounded-md bg-primary px-5 text-[14px] font-medium text-primary-foreground transition-colors hover:bg-primary-hover"
           >
             {t.cta.primary}
             <ArrowRight className="h-4 w-4" />
-          </a>
-          <a
-            href="#"
+          </Link>
+          <Link
+            to="/login"
             className="inline-flex h-11 items-center gap-2 rounded-md border border-border px-5 text-[14px] font-medium text-foreground transition-colors hover:bg-surface"
           >
             {t.cta.secondary}
-          </a>
+          </Link>
         </div>
       </div>
     </section>
