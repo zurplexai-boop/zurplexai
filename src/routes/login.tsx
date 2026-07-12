@@ -28,7 +28,7 @@ function LoginPage() {
             className="mt-6 space-y-4"
             onSubmit={(e) => {
               e.preventDefault();
-              window.location.href = "/onboarding";
+              navigate({ to: "/app/dashboard" });
             }}
           >
             <div>
