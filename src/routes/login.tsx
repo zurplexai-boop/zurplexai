@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 
 export const Route = createFileRoute("/login")({
@@ -7,6 +7,7 @@ export const Route = createFileRoute("/login")({
 });
 
 function LoginPage() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   return (
@@ -27,7 +28,7 @@ function LoginPage() {
             className="mt-6 space-y-4"
             onSubmit={(e) => {
               e.preventDefault();
-              window.location.href = "/onboarding";
+              navigate({ to: "/app/dashboard" });
             }}
           >
             <div>
