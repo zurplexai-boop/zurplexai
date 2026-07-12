@@ -180,20 +180,20 @@ function Nav() {
         </nav>
         <div className="flex shrink-0 items-center gap-2">
           <LanguageSwitcher />
-          <a
-            href="#"
+          <Link
+            to="/login"
             className="hidden text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground md:inline-flex"
           >
             {t.nav.signIn}
-          </a>
-          <a
-            href="#cta"
+          </Link>
+          <Link
+            to="/onboarding"
             className="inline-flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-[13px] font-medium text-primary-foreground transition-colors hover:bg-primary-hover sm:px-3.5"
           >
             <span className="hidden sm:inline">{t.nav.contactSales}</span>
             <span className="sm:hidden">{t.nav.contactSales.split(" ")[0]}</span>
             <ArrowRight className="h-3.5 w-3.5" />
-          </a>
+          </Link>
         </div>
 
       </div>
