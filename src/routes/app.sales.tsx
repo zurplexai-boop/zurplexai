@@ -1,18 +1,23 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Plus, Filter } from "lucide-react";
 import { useState } from "react";
-import { Badge, Card, PageHeader, StatCard } from "@/components/app/ui";
-import { channelSales, fmt, sales } from "@/lib/mock-data";
+import { Badge, Card, Field, Modal, ModalActions, PageHeader, Select, StatCard } from "@/components/app/ui";
+import { channelSales, fmt } from "@/lib/mock-data";
+import { useMockStore } from "@/lib/mock-store";
 
 export const Route = createFileRoute("/app/sales")({
   head: () => ({ meta: [{ title: "Ventas — ZurplexAI" }] }),
   component: SalesPage,
 });
 
+const channels = ["WhatsApp", "Instagram", "Tienda física", "Sitio web", "Marketplace"];
+const methods = ["Pix", "Crédito", "Débito", "Efectivo", "Transferencia"];
+
 function SalesPage() {
+  const { sales, addSale } = useMockStore();
   const [open, setOpen] = useState(false);
   const total = sales.reduce((sum, s) => sum + s.qty * s.price, 0);
-  const avg = total / sales.length;
+  const avg = sales.length ? total / sales.length : 0;
   const topChannel = [...channelSales].sort((a, b) => b.value - a.value)[0].channel;
 
   return (
@@ -79,70 +84,65 @@ function SalesPage() {
         </Card>
       </div>
 
-      {open && <NewSaleModal onClose={() => setOpen(false)} />}
+      {open && (
+        <NewSaleModal
+          onClose={() => setOpen(false)}
+          onSave={(s) => {
+            addSale(s);
+            setOpen(false);
+          }}
+        />
+      )}
     </>
   );
 }
 
-function NewSaleModal({ onClose }: { onClose: () => void }) {
+function NewSaleModal({
+  onClose,
+  onSave,
+}: {
+  onClose: () => void;
+  onSave: (s: {
+    date: string;
+    product: string;
+    qty: number;
+    price: number;
+    customer: string;
+    channel: string;
+    method: string;
+  }) => void;
+}) {
+  const today = new Date().toISOString().slice(0, 10);
+  const [form, setForm] = useState({
+    date: today,
+    qty: 1,
+    product: "",
+    price: 0,
+    customer: "",
+    channel: channels[0],
+    method: methods[0],
+  });
+  const set = <K extends keyof typeof form>(k: K, v: (typeof form)[K]) =>
+    setForm((f) => ({ ...f, [k]: v }));
+
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-0 sm:items-center sm:p-4" onClick={onClose}>
-      <div
-        onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-lg rounded-t-2xl border border-border bg-card p-5 sm:rounded-2xl sm:p-6"
+    <Modal title="Nueva venta" subtitle="Registrá una venta rápida." onClose={onClose}>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          onSave(form);
+        }}
+        className="grid grid-cols-2 gap-3"
       >
-        <h2 className="text-lg font-semibold">Nueva venta</h2>
-        <p className="mt-1 text-xs text-muted-foreground">Registrá una venta rápida.</p>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            onClose();
-          }}
-          className="mt-4 grid grid-cols-2 gap-3"
-        >
-          <Field label="Fecha" type="date" />
-          <Field label="Cantidad" type="number" placeholder="1" />
-          <Field label="Producto" placeholder="Brownie recheado" className="col-span-2" />
-          <Field label="Precio unitario" placeholder="R$ 12,00" />
-          <Field label="Cliente" placeholder="Ana Souza" />
-          <Select label="Canal" options={["WhatsApp", "Instagram", "Tienda física", "Sitio web", "Marketplace"]} />
-          <Select label="Forma de pago" options={["Pix", "Crédito", "Débito", "Efectivo", "Transferencia"]} />
-          <Field label="Observación" placeholder="—" className="col-span-2" />
-          <div className="col-span-2 mt-2 flex justify-end gap-2">
-            <button type="button" onClick={onClose} className="h-9 rounded-md border border-border bg-surface px-3 text-xs font-medium hover:bg-card">
-              Cancelar
-            </button>
-            <button type="submit" className="h-9 rounded-md bg-primary px-4 text-xs font-medium text-primary-foreground hover:bg-primary-hover">
-              Guardar
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-}
-
-function Field({ label, className = "", ...props }: { label: string; className?: string } & React.InputHTMLAttributes<HTMLInputElement>) {
-  return (
-    <label className={`block ${className}`}>
-      <span className="text-[11px] font-medium text-muted-foreground">{label}</span>
-      <input
-        {...props}
-        className="mt-1 h-9 w-full rounded-md border border-border bg-surface px-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
-      />
-    </label>
-  );
-}
-
-function Select({ label, options, className = "" }: { label: string; options: string[]; className?: string }) {
-  return (
-    <label className={`block ${className}`}>
-      <span className="text-[11px] font-medium text-muted-foreground">{label}</span>
-      <select className="mt-1 h-9 w-full rounded-md border border-border bg-surface px-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary">
-        {options.map((o) => (
-          <option key={o}>{o}</option>
-        ))}
-      </select>
-    </label>
+        <Field label="Fecha" type="date" required value={form.date} onChange={(e) => set("date", e.target.value)} />
+        <Field label="Cantidad" type="number" min={1} required value={form.qty} onChange={(e) => set("qty", Number(e.target.value))} />
+        <Field label="Producto" required placeholder="Brownie recheado" className="col-span-2" value={form.product} onChange={(e) => set("product", e.target.value)} />
+        <Field label="Precio unitario" type="number" step="0.01" min={0} required value={form.price} onChange={(e) => set("price", Number(e.target.value))} />
+        <Field label="Cliente" required placeholder="Ana Souza" value={form.customer} onChange={(e) => set("customer", e.target.value)} />
+        <Select label="Canal" options={channels} value={form.channel} onChange={(e) => set("channel", e.target.value)} />
+        <Select label="Forma de pago" options={methods} value={form.method} onChange={(e) => set("method", e.target.value)} />
+        <ModalActions onCancel={onClose} />
+      </form>
+    </Modal>
   );
 }
