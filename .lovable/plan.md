@@ -1,34 +1,50 @@
-## Problema
+## Objetivo
 
-Los botones "Entrar" / CTA de la landing no navegan a ningún lado porque están definidos como `<a href="#">` o `<a href="#cta">`. Son anclas dentro de la misma página, no enlaces a la app.
+Hacer funcionales los botones de las secciones Ventas, Productos, Clientes, Costos/Gastos y Finanzas usando **estado local en memoria** (mock interactivo). Sin backend, sin persistencia al recargar.
 
-Ubicaciones encontradas en `src/routes/index.tsx`:
+## Enfoque técnico
 
-- Línea 184 — botón "Entrar" del header (desktop): `href="#"`
-- Línea 190 — CTA principal del header (desktop): `href="#cta"`
-- Línea 125 — botón dentro del menú móvil: solo cierra el menú, no navega
-- Líneas 236 y 243 — CTAs del hero (primario y secundario): `href="#cta"`
-- Líneas 595 y 602 — CTAs de la sección final: `href="#"`
+Crear un `MockDataProvider` (React Context) en `src/lib/mock-store.tsx` que:
 
-## Cambios
+- Inicializa el estado con los arrays actuales de `src/lib/mock-data.ts` (`products`, `sales`, `customers`, `expenses`).
+- Expone getters y acciones: `addSale`, `addProduct`, `updateProduct`, `deleteProduct`, `addCustomer`, `updateCustomer`, `deleteCustomer`, `addExpense`, `deleteExpense`.
+- Deriva KPIs de finanzas (`income`, `expenses`, `costs`, `profit`, `margin`) a partir de las ventas y gastos actuales.
 
-Reemplazar esos `<a href="#...">` por `<Link>` de `@tanstack/react-router` con destinos reales:
+Se monta dentro de `src/routes/app.tsx` para que todas las páginas hijas lo consuman con un hook `useMockStore()`.
 
-- **"Entrar" (header desktop + menú móvil)** → `<Link to="/login">`
-- **CTA primario del header** → `<Link to="/onboarding">` (crear cuenta / empezar)
-- **CTA primario del hero** → `<Link to="/onboarding">`
-- **CTA secundario del hero** → `<Link to="/login">` (o mantener ancla `#product` si el texto es "Ver producto")
-- **CTA final — primario** → `<Link to="/onboarding">`
-- **CTA final — secundario** → `<Link to="/login">`
+## Cambios por pantalla
 
-En el menú móvil, además de cerrar el menú, el botón "Entrar" debe hacer `navigate({ to: "/login" })` con `useNavigate`.
+**Ventas (`app.sales.tsx`)**
+- El modal "Nueva venta" ya existe: conectar el submit para llamar `addSale({ date, product, qty, price, customer, channel, method })` y cerrar.
+- Botón "Exportar" queda como no-op visible (tooltip "Próximamente") — fuera de alcance.
 
-## Alcance
+**Productos (`app.products.tsx`)**
+- Botón "Nuevo producto" → abre modal con formulario (nombre, categoría, precio, costo). Calcula margen automáticamente. `addProduct` en submit.
+- Cada fila: menú/acciones "Editar" y "Eliminar" → modal edición + confirm delete.
 
-- Solo se toca `src/routes/index.tsx` (frontend/presentación).
-- No se cambia copy, estilos, ni el resto de la landing.
-- No se modifica auth ni backend — `/login` y `/onboarding` ya existen como pantallas mock y llevan a `/app/dashboard`.
+**Clientes (`app.customers.tsx`)**
+- Botón "Nuevo cliente" → modal (nombre, teléfono, email, canal). `addCustomer`.
+- Cada fila: "Editar" / "Eliminar".
+
+**Costos y Gastos (`app.costs-expenses.tsx`)**
+- Botón "Nuevo movimiento" → modal (tipo costo/gasto, categoría, descripción, proveedor, monto, método, fijo sí/no). `addExpense`.
+- Tabs "Todos / Costos / Gastos" ya cambian el filtro visualmente — verificar que sigan funcionando con datos del store.
+- Cada fila: "Eliminar".
+
+**Finanzas (`app.finance.tsx`)**
+- No agrega botones nuevos: las tarjetas de KPI (income, costs, expenses, profit, margin) se recalculan desde el store en lugar de leer los mocks estáticos. Así al registrar una venta o un gasto los números se actualizan.
+
+## Fuera de alcance (esta pasada)
+
+- Alertas, Automatizaciones, Configuración, Soporte, Onboarding, Dashboard KPIs — se dejan como están.
+- Exportar / importar CSV.
+- Persistencia (recargar borra los cambios — comportamiento esperado).
+- Validación avanzada de formularios (solo `required` y `type=number`).
 
 ## Detalle técnico
 
-`Link` ya está importado en el archivo (línea 1). Mantener las clases actuales de cada botón para no alterar el diseño; solo cambiar el elemento `<a>` por `<Link to="...">` y quitar `href`.
+- Nuevo archivo `src/lib/mock-store.tsx` con `MockDataProvider` + `useMockStore()`. Tipos reutilizados de `mock-data.ts`.
+- IDs generados con `crypto.randomUUID()`.
+- Componente reutilizable `Modal` en `src/components/app/ui.tsx` (o inline en cada pantalla si ya existe patrón — Ventas ya tiene uno; extraerlo).
+- Confirmación de borrado con `window.confirm` para mantenerlo simple.
+- Finanzas: `useMemo` sobre `sales` y `expenses` para KPIs.

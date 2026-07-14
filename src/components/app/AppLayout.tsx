@@ -6,6 +6,7 @@ import {
 import { useState, type ReactNode } from "react";
 import { AppI18nProvider, useAppI18n, type AppLang } from "@/lib/app-i18n";
 import { businessName } from "@/lib/mock-data";
+import { MockStoreProvider } from "@/lib/mock-store";
 import { cn } from "@/lib/utils";
 
 const items = [
@@ -188,9 +189,11 @@ function InnerLayout({ children }: { children: ReactNode }) {
 export function AppLayout() {
   return (
     <AppI18nProvider>
-      <InnerLayout>
-        <Outlet />
-      </InnerLayout>
+      <MockStoreProvider>
+        <InnerLayout>
+          <Outlet />
+        </InnerLayout>
+      </MockStoreProvider>
     </AppI18nProvider>
   );
 }

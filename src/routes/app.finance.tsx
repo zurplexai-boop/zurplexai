@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, Legend } from "recharts";
 import { Card, PageHeader, StatCard } from "@/components/app/ui";
-import { dashboardStats, fmt, monthlySeries } from "@/lib/mock-data";
+import { fmt, monthlySeries } from "@/lib/mock-data";
+import { useMockStore } from "@/lib/mock-store";
 
 export const Route = createFileRoute("/app/finance")({
   head: () => ({ meta: [{ title: "Finanzas — ZurplexAI" }] }),
@@ -17,7 +18,14 @@ const tooltipStyle = {
 };
 
 function FinancePage() {
-  const s = dashboardStats;
+  const { totals } = useMockStore();
+  const s = {
+    income: totals.income,
+    costs: totals.costs,
+    expenses: totals.expensesTotal,
+    profit: totals.profit,
+    margin: totals.margin,
+  };
   const bruto = s.income - s.costs;
   return (
     <>
@@ -29,6 +37,7 @@ function FinancePage() {
         <StatCard label="Gastos" value={fmt(s.expenses)} tone="warning" />
         <StatCard label="Lucro estimado" value={fmt(s.profit)} delta={`Margen ${s.margin}%`} tone="positive" />
       </section>
+
 
       <div className="mt-6 grid gap-4 lg:grid-cols-3">
         <Card title="DRE simplificado" className="lg:col-span-1">
