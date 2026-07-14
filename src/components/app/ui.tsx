@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
-import type { ReactNode } from "react";
+import { X } from "lucide-react";
+import type { InputHTMLAttributes, ReactNode, SelectHTMLAttributes } from "react";
 
 export function PageHeader({
   title,
@@ -101,5 +102,108 @@ export function Badge({
     >
       {children}
     </span>
+  );
+}
+
+export function Modal({
+  title,
+  subtitle,
+  onClose,
+  children,
+}: {
+  title: string;
+  subtitle?: string;
+  onClose: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-0 sm:items-center sm:p-4"
+      onClick={onClose}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-lg rounded-t-2xl border border-border bg-card p-5 sm:rounded-2xl sm:p-6"
+      >
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <h2 className="text-lg font-semibold">{title}</h2>
+            {subtitle ? <p className="mt-1 text-xs text-muted-foreground">{subtitle}</p> : null}
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="grid h-8 w-8 place-items-center rounded-md text-muted-foreground hover:bg-surface hover:text-foreground"
+            aria-label="Cerrar"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+        <div className="mt-4">{children}</div>
+      </div>
+    </div>
+  );
+}
+
+export function Field({
+  label,
+  className = "",
+  ...props
+}: { label: string; className?: string } & InputHTMLAttributes<HTMLInputElement>) {
+  return (
+    <label className={cn("block", className)}>
+      <span className="text-[11px] font-medium text-muted-foreground">{label}</span>
+      <input
+        {...props}
+        className="mt-1 h-9 w-full rounded-md border border-border bg-surface px-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+      />
+    </label>
+  );
+}
+
+export function Select({
+  label,
+  options,
+  className = "",
+  ...props
+}: {
+  label: string;
+  options: string[];
+  className?: string;
+} & SelectHTMLAttributes<HTMLSelectElement>) {
+  return (
+    <label className={cn("block", className)}>
+      <span className="text-[11px] font-medium text-muted-foreground">{label}</span>
+      <select
+        {...props}
+        className="mt-1 h-9 w-full rounded-md border border-border bg-surface px-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+      >
+        {options.map((o) => (
+          <option key={o} value={o}>
+            {o}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
+}
+
+export function ModalActions({ onCancel, submitLabel = "Guardar" }: { onCancel: () => void; submitLabel?: string }) {
+  return (
+    <div className="col-span-2 mt-2 flex justify-end gap-2">
+      <button
+        type="button"
+        onClick={onCancel}
+        className="h-9 rounded-md border border-border bg-surface px-3 text-xs font-medium hover:bg-card"
+      >
+        Cancelar
+      </button>
+      <button
+        type="submit"
+        className="h-9 rounded-md bg-primary px-4 text-xs font-medium text-primary-foreground hover:bg-primary-hover"
+      >
+        {submitLabel}
+      </button>
+    </div>
   );
 }
