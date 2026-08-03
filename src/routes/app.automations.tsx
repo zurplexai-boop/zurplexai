@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Zap } from "lucide-react";
 import { Badge, PageHeader } from "@/components/app/ui";
 import { automations } from "@/lib/mock-data";
+import { useAppI18n } from "@/lib/app-i18n";
 
 export const Route = createFileRoute("/app/automations")({
   head: () => ({ meta: [{ title: "Automatizaciones — ZurplexAI" }] }),
@@ -9,12 +10,11 @@ export const Route = createFileRoute("/app/automations")({
 });
 
 function AutomationsPage() {
+  const { t } = useAppI18n();
+  const a18 = t.automations;
   return (
     <>
-      <PageHeader
-        title="Automatizaciones"
-        subtitle="Deja que ZurplexAI trabaje por vos."
-      />
+      <PageHeader title={a18.title} subtitle={a18.subtitle} />
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {automations.map((a) => (
           <div key={a.id} className="flex flex-col rounded-xl border border-border bg-card p-5">
@@ -23,11 +23,11 @@ function AutomationsPage() {
                 <Zap className="h-4 w-4" />
               </div>
               {a.status === "active" ? (
-                <Badge tone="success">Activo</Badge>
+                <Badge tone="success">{a18.active}</Badge>
               ) : a.status === "premium" ? (
-                <Badge tone="info">Premium</Badge>
+                <Badge tone="info">{a18.premium}</Badge>
               ) : (
-                <Badge tone="default">Disponible pronto</Badge>
+                <Badge tone="default">{a18.comingSoon}</Badge>
               )}
             </div>
             <h3 className="mt-4 text-sm font-semibold">{a.name}</h3>
@@ -39,7 +39,7 @@ function AutomationsPage() {
                   : "bg-primary text-primary-foreground hover:bg-primary-hover"
               }`}
             >
-              {a.status === "premium" ? "Solicitar" : a.status === "active" ? "Configurar" : "Activar"}
+              {a.status === "premium" ? a18.request : a.status === "active" ? a18.configure : a18.activate}
             </button>
           </div>
         ))}
