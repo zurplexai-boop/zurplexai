@@ -19,6 +19,7 @@ function CustomersPage() {
   const c18 = t.customers;
   const [creating, setCreating] = useState(false);
   const [editing, setEditing] = useState<Customer | null>(null);
+  const hasCustomers = customers.length > 0;
 
   return (
     <>
@@ -37,9 +38,9 @@ function CustomersPage() {
 
       <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <StatCard label={t.common.total} value={String(customers.length)} />
-        <StatCard label={c18.newThisMonth} value="14" tone="positive" />
-        <StatCard label={c18.recurring} value="47" />
-        <StatCard label={c18.inactive} value="8" tone="warning" />
+        <StatCard label={c18.newThisMonth} value={hasCustomers ? "14" : "0"} tone="positive" />
+        <StatCard label={c18.recurring} value={hasCustomers ? "47" : "0"} />
+        <StatCard label={c18.inactive} value={hasCustomers ? "8" : "0"} tone="warning" />
       </section>
 
       <div className="mt-6">
@@ -58,6 +59,9 @@ function CustomersPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
+                {customers.length === 0 && (
+                  <tr><td colSpan={7} className="py-8 text-center text-sm text-muted-foreground">{t.common.noData}</td></tr>
+                )}
                 {customers.map((c) => (
                   <tr key={c.id} className="hover:bg-surface/50">
                     <td className="py-2.5 pr-3 font-medium">{c.name}</td>
