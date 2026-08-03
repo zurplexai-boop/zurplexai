@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Badge, Card, Field, Modal, ModalActions, PageHeader, Select, StatCard } from "@/components/app/ui";
 import { fmt } from "@/lib/mock-data";
 import { useMockStore } from "@/lib/mock-store";
+import { useAppI18n } from "@/lib/app-i18n";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/app/costs-expenses")({
@@ -11,77 +12,88 @@ export const Route = createFileRoute("/app/costs-expenses")({
   component: CostsPage,
 });
 
-const tabs = ["Costos", "Gastos", "Proveedores", "Categorías"] as const;
+type TabKey = "costs" | "expenses" | "suppliers" | "categories";
 const methods = ["Pix", "Crédito", "Débito", "Efectivo", "Transferencia"];
 const categoriesCosto = ["Materia prima", "Embalaje", "Mercadería"];
 const categoriesGasto = ["Alquiler", "Marketing", "Empleados", "Servicios", "Otros"];
 
 function CostsPage() {
   const { expenses, addExpense, deleteExpense } = useMockStore();
-  const [tab, setTab] = useState<(typeof tabs)[number]>("Costos");
+  const { t } = useAppI18n();
+  const c = t.costs;
+  const [tab, setTab] = useState<TabKey>("costs");
   const [open, setOpen] = useState(false);
+
+  const tabs: { key: TabKey; label: string }[] = [
+    { key: "costs", label: c.tabCosts },
+    { key: "expenses", label: c.tabExpenses },
+    { key: "suppliers", label: c.tabSuppliers },
+    { key: "categories", label: c.tabCategories },
+  ];
 
   const totalCostos = expenses.filter((e) => e.type === "costo").reduce((s, e) => s + e.amount, 0);
   const totalFijos = expenses.filter((e) => e.type === "gasto" && e.fixed).reduce((s, e) => s + e.amount, 0);
   const totalVar = expenses.filter((e) => e.type === "gasto" && !e.fixed).reduce((s, e) => s + e.amount, 0);
 
-  const filtered = expenses.filter((e) => (tab === "Costos" ? e.type === "costo" : tab === "Gastos" ? e.type === "gasto" : true));
+  const filtered = expenses.filter((e) =>
+    tab === "costs" ? e.type === "costo" : tab === "expenses" ? e.type === "gasto" : true,
+  );
 
   return (
     <>
       <PageHeader
-        title="Costos y gastos"
-        subtitle="Todo lo que sale de tu negocio."
+        title={c.title}
+        subtitle={c.subtitle}
         actions={
           <button
             onClick={() => setOpen(true)}
             className="inline-flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-medium text-primary-foreground hover:bg-primary-hover"
           >
-            <Plus className="h-3.5 w-3.5" /> Nuevo
+            <Plus className="h-3.5 w-3.5" /> {t.common.new}
           </button>
         }
       />
 
       <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <StatCard label="Costos del mes" value={fmt(totalCostos)} tone="negative" />
-        <StatCard label="Gastos fijos" value={fmt(totalFijos)} />
-        <StatCard label="Gastos variables" value={fmt(totalVar)} tone="warning" />
-        <StatCard label="Mayor categoría" value="Alquiler" hint="+0% vs mes ant." />
+        <StatCard label={c.monthCosts} value={fmt(totalCostos)} tone="negative" />
+        <StatCard label={c.fixedExpenses} value={fmt(totalFijos)} />
+        <StatCard label={c.variableExpenses} value={fmt(totalVar)} tone="warning" />
+        <StatCard label={c.topCategory} value="Alquiler" hint={`+0% ${t.common.vsPrevMonth}`} />
       </section>
 
       <div className="mt-6 flex flex-wrap gap-2 border-b border-border">
-        {tabs.map((t) => (
+        {tabs.map((x) => (
           <button
-            key={t}
-            onClick={() => setTab(t)}
+            key={x.key}
+            onClick={() => setTab(x.key)}
             className={cn(
               "-mb-px border-b-2 px-3 py-2 text-sm transition-colors",
-              tab === t
+              tab === x.key
                 ? "border-primary text-foreground"
                 : "border-transparent text-muted-foreground hover:text-foreground",
             )}
           >
-            {t}
+            {x.label}
           </button>
         ))}
       </div>
 
       <div className="mt-4">
         <Card>
-          {tab === "Proveedores" || tab === "Categorías" ? (
-            <p className="py-8 text-center text-sm text-muted-foreground">Próximamente.</p>
+          {tab === "suppliers" || tab === "categories" ? (
+            <p className="py-8 text-center text-sm text-muted-foreground">{t.common.soon}</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-border text-left text-[11px] uppercase tracking-wider text-muted-foreground">
-                    <th className="py-2 pr-3 font-medium">Fecha</th>
-                    <th className="py-2 pr-3 font-medium">Categoría</th>
-                    <th className="py-2 pr-3 font-medium">Descripción</th>
-                    <th className="py-2 pr-3 font-medium">Proveedor</th>
-                    <th className="py-2 pr-3 font-medium">Tipo</th>
-                    <th className="py-2 pr-3 text-right font-medium">Valor</th>
-                    <th className="py-2 pr-3 text-right font-medium">Acciones</th>
+                    <th className="py-2 pr-3 font-medium">{t.common.date}</th>
+                    <th className="py-2 pr-3 font-medium">{t.common.category}</th>
+                    <th className="py-2 pr-3 font-medium">{t.common.description}</th>
+                    <th className="py-2 pr-3 font-medium">{t.common.supplier}</th>
+                    <th className="py-2 pr-3 font-medium">{t.common.type}</th>
+                    <th className="py-2 pr-3 text-right font-medium">{t.common.amount}</th>
+                    <th className="py-2 pr-3 text-right font-medium">{t.common.actions}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
@@ -92,13 +104,14 @@ function CostsPage() {
                       <td className="py-2.5 pr-3 font-medium">{e.description}</td>
                       <td className="py-2.5 pr-3 text-muted-foreground">{e.supplier}</td>
                       <td className="py-2.5 pr-3">
-                        <Badge tone={e.fixed ? "info" : "default"}>{e.fixed ? "Fijo" : "Variable"}</Badge>
+                        <Badge tone={e.fixed ? "info" : "default"}>{e.fixed ? c.fixed : c.variable}</Badge>
                       </td>
                       <td className="py-2.5 pr-3 text-right font-mono text-xs">{fmt(e.amount)}</td>
                       <td className="py-2.5 pr-3 text-right">
                         <button
+                          aria-label={t.common.delete}
                           onClick={() => {
-                            if (window.confirm(`¿Eliminar "${e.description}"?`)) deleteExpense(e.id);
+                            if (window.confirm(`${t.common.confirmDelete} "${e.description}"?`)) deleteExpense(e.id);
                           }}
                           className="inline-flex items-center gap-1 rounded-md border border-border bg-surface px-2 py-1 text-xs text-destructive hover:bg-destructive/10"
                         >
@@ -143,6 +156,7 @@ function ExpenseModal({
     method: string;
   }) => void;
 }) {
+  const { t } = useAppI18n();
   const today = new Date().toISOString().slice(0, 10);
   const [form, setForm] = useState({
     date: today,
@@ -160,7 +174,7 @@ function ExpenseModal({
   const categories = form.type === "costo" ? categoriesCosto : categoriesGasto;
 
   return (
-    <Modal title="Nuevo movimiento" subtitle="Costo o gasto del negocio." onClose={onClose}>
+    <Modal title={t.costs.newMovement} subtitle={t.costs.modalSubtitle} onClose={onClose}>
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -168,21 +182,21 @@ function ExpenseModal({
         }}
         className="grid grid-cols-2 gap-3"
       >
-        <Field label="Fecha" type="date" required value={form.date} onChange={(e) => set("date", e.target.value)} />
+        <Field label={t.common.date} type="date" required value={form.date} onChange={(e) => set("date", e.target.value)} />
         <Select
-          label="Tipo"
+          label={t.common.type}
           options={["costo", "gasto"]}
           value={form.type}
           onChange={(e) => {
-            const t = e.target.value as "costo" | "gasto";
-            setForm((f) => ({ ...f, type: t, category: t === "costo" ? categoriesCosto[0] : categoriesGasto[0] }));
+            const ty = e.target.value as "costo" | "gasto";
+            setForm((f) => ({ ...f, type: ty, category: ty === "costo" ? categoriesCosto[0] : categoriesGasto[0] }));
           }}
         />
-        <Select label="Categoría" options={categories} value={form.category} onChange={(e) => set("category", e.target.value)} />
-        <Field label="Monto" type="number" step="0.01" min={0} required value={form.amount} onChange={(e) => set("amount", Number(e.target.value))} />
-        <Field label="Descripción" required className="col-span-2" value={form.description} onChange={(e) => set("description", e.target.value)} />
-        <Field label="Proveedor" value={form.supplier} onChange={(e) => set("supplier", e.target.value)} />
-        <Select label="Método" options={methods} value={form.method} onChange={(e) => set("method", e.target.value)} />
+        <Select label={t.common.category} options={categories} value={form.category} onChange={(e) => set("category", e.target.value)} />
+        <Field label={t.common.amount} type="number" step="0.01" min={0} required value={form.amount} onChange={(e) => set("amount", Number(e.target.value))} />
+        <Field label={t.common.description} required className="col-span-2" value={form.description} onChange={(e) => set("description", e.target.value)} />
+        <Field label={t.common.supplier} value={form.supplier} onChange={(e) => set("supplier", e.target.value)} />
+        <Select label={t.common.method} options={methods} value={form.method} onChange={(e) => set("method", e.target.value)} />
         <label className="col-span-2 flex items-center gap-2 text-xs text-muted-foreground">
           <input
             type="checkbox"
@@ -190,7 +204,7 @@ function ExpenseModal({
             onChange={(e) => set("fixed", e.target.checked)}
             className="h-4 w-4 rounded border-border"
           />
-          Gasto fijo (se repite todos los meses)
+          {t.costs.fixedHint}
         </label>
         <ModalActions onCancel={onClose} />
       </form>
