@@ -10,6 +10,7 @@ import {
   dashboardStats, fmt, monthlySeries, topProducts,
 } from "@/lib/mock-data";
 import { useAppI18n } from "@/lib/app-i18n";
+import { useMockStore } from "@/lib/mock-store";
 
 export const Route = createFileRoute("/app/dashboard")({
   head: () => ({ meta: [{ title: "Panel — ZurplexAI" }] }),
@@ -25,7 +26,16 @@ const tooltipStyle = {
 };
 
 function Dashboard() {
-  const s = dashboardStats;
+  const { dataMode } = useMockStore();
+  const isEmpty = dataMode === "empty";
+  const s = isEmpty
+    ? { income: 0, expenses: 0, costs: 0, profit: 0, margin: 0, customers: 0, topProduct: "—", worstProduct: "—", mostProfitable: "—", activeAlerts: 0 }
+    : dashboardStats;
+  const dashboardMonthlySeries = isEmpty ? [] : monthlySeries;
+  const dashboardChannelSales = isEmpty ? [] : channelSales;
+  const dashboardTopProducts = isEmpty ? [] : topProducts;
+  const dashboardCustomersGrowth = isEmpty ? [] : customersGrowth;
+  const dashboardAlerts = isEmpty ? [] : alerts;
   const { t } = useAppI18n();
   const d = t.dashboard;
   return (
@@ -61,11 +71,11 @@ function Dashboard() {
       />
 
       <section className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-        <StatCard label={d.income} value={fmt(s.income)} delta={`+14% ${t.common.vsPrevMonth}`} tone="positive" />
-        <StatCard label={d.expenses} value={fmt(s.expenses)} delta={`+8% ${t.common.vsPrevMonth}`} tone="warning" />
-        <StatCard label={d.costs} value={fmt(s.costs)} delta={`+18% ${t.common.vsPrevMonth}`} tone="negative" />
+        <StatCard label={d.income} value={fmt(s.income)} delta={isEmpty ? undefined : `+14% ${t.common.vsPrevMonth}`} tone="positive" />
+        <StatCard label={d.expenses} value={fmt(s.expenses)} delta={isEmpty ? undefined : `+8% ${t.common.vsPrevMonth}`} tone="warning" />
+        <StatCard label={d.costs} value={fmt(s.costs)} delta={isEmpty ? undefined : `+18% ${t.common.vsPrevMonth}`} tone="negative" />
         <StatCard label={d.profit} value={fmt(s.profit)} delta={`${d.marginLabel} ${s.margin}%`} tone="positive" />
-        <StatCard label={d.customers} value={String(s.customers)} delta={d.newCustomersMonth} tone="positive" />
+        <StatCard label={d.customers} value={String(s.customers)} delta={isEmpty ? undefined : d.newCustomersMonth} tone="positive" />
       </section>
 
       <section className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -79,7 +89,7 @@ function Dashboard() {
         <Card title={d.incomeVsExpenses}>
           <div className="h-64">
             <ResponsiveContainer>
-              <BarChart data={monthlySeries}>
+              <BarChart data={dashboardMonthlySeries}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
                 <XAxis dataKey="m" {...chartAxis} />
                 <YAxis {...chartAxis} />
@@ -95,7 +105,7 @@ function Dashboard() {
         <Card title={d.salesByChannel}>
           <div className="h-64">
             <ResponsiveContainer>
-              <BarChart data={channelSales} layout="vertical" margin={{ left: 20 }}>
+              <BarChart data={dashboardChannelSales} layout="vertical" margin={{ left: 20 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
                 <XAxis type="number" {...chartAxis} />
                 <YAxis type="category" dataKey="channel" {...chartAxis} width={90} />
@@ -109,7 +119,7 @@ function Dashboard() {
         <Card title={d.top5}>
           <div className="h-64">
             <ResponsiveContainer>
-              <BarChart data={topProducts}>
+              <BarChart data={dashboardTopProducts}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
                 <XAxis dataKey="name" {...chartAxis} tick={{ fontSize: 10 }} />
                 <YAxis {...chartAxis} />
@@ -123,7 +133,7 @@ function Dashboard() {
         <Card title={d.customersEvolution}>
           <div className="h-64">
             <ResponsiveContainer>
-              <LineChart data={customersGrowth}>
+              <LineChart data={dashboardCustomersGrowth}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
                 <XAxis dataKey="m" {...chartAxis} />
                 <YAxis {...chartAxis} />
@@ -151,7 +161,10 @@ function Dashboard() {
           }
         >
           <ul className="divide-y divide-border">
-            {alerts.slice(0, 3).map((a) => (
+            {dashboardAlerts.length === 0 && (
+              <li className="py-6 text-center text-sm text-muted-foreground">{t.common.noData}</li>
+            )}
+            {dashboardAlerts.slice(0, 3).map((a) => (
               <li key={a.id} className="flex items-start gap-3 py-3">
                 <div className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-warning/10 text-warning ring-1 ring-warning/30">
                   <AlertTriangle className="h-3.5 w-3.5" />
