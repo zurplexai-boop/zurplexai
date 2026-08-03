@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Plus, Filter } from "lucide-react";
 import { useState } from "react";
 import { Badge, Card, Field, Modal, ModalActions, PageHeader, Select, StatCard } from "@/components/app/ui";
-import { channelSales, fmt } from "@/lib/mock-data";
+import { fmt } from "@/lib/mock-data";
 import { useMockStore } from "@/lib/mock-store";
 import { useAppI18n } from "@/lib/app-i18n";
 
@@ -21,7 +21,11 @@ function SalesPage() {
   const [open, setOpen] = useState(false);
   const total = sales.reduce((sum, x) => sum + x.qty * x.price, 0);
   const avg = sales.length ? total / sales.length : 0;
-  const topChannel = [...channelSales].sort((a, b) => b.value - a.value)[0].channel;
+  const channelTotals = sales.reduce<Record<string, number>>((totals, sale) => {
+    totals[sale.channel] = (totals[sale.channel] ?? 0) + sale.qty * sale.price;
+    return totals;
+  }, {});
+  const topChannel = Object.entries(channelTotals).sort((a, b) => b[1] - a[1])[0]?.[0] ?? "—";
 
   return (
     <>
@@ -68,6 +72,9 @@ function SalesPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
+                {sales.length === 0 && (
+                  <tr><td colSpan={7} className="py-8 text-center text-sm text-muted-foreground">{t.common.noData}</td></tr>
+                )}
                 {sales.map((x) => (
                   <tr key={x.id} className="hover:bg-surface/50">
                     <td className="py-2.5 pr-3 text-muted-foreground">{x.date}</td>
