@@ -1,50 +1,40 @@
 ## Objetivo
 
-Hacer funcionales los botones de las secciones Ventas, Productos, Clientes, Costos/Gastos y Finanzas usando **estado local en memoria** (mock interactivo). Sin backend, sin persistencia al recargar.
+Poder elegir el idioma (Español / Português) desde el panel de usuario y que **toda la interfaz del panel** cambie al instante, sin recargar.
 
-## Enfoque técnico
+## Situación actual
 
-Crear un `MockDataProvider` (React Context) en `src/lib/mock-store.tsx` que:
+- Ya existe `src/lib/app-i18n.tsx` con un diccionario mínimo (menú lateral + algunas palabras comunes) y guarda el idioma en el navegador.
+- El selector ES/PT ya está en la barra lateral (`AppLayout`), pero hoy solo traduce el menú: los títulos, botones, tablas, modales y textos de cada pantalla están escritos directamente en español.
+- La pantalla de Configuración muestra "Idioma" como texto fijo, sin selector.
 
-- Inicializa el estado con los arrays actuales de `src/lib/mock-data.ts` (`products`, `sales`, `customers`, `expenses`).
-- Expone getters y acciones: `addSale`, `addProduct`, `updateProduct`, `deleteProduct`, `addCustomer`, `updateCustomer`, `deleteCustomer`, `addExpense`, `deleteExpense`.
-- Deriva KPIs de finanzas (`income`, `expenses`, `costs`, `profit`, `margin`) a partir de las ventas y gastos actuales.
+## Qué se va a hacer
 
-Se monta dentro de `src/routes/app.tsx` para que todas las páginas hijas lo consuman con un hook `useMockStore()`.
+1. **Ampliar el diccionario** en `src/lib/app-i18n.tsx` con secciones por pantalla: dashboard, ventas, productos, clientes, costos y gastos, finanzas, alertas, automatizaciones, soporte y configuración. Cada clave con su versión en español y en portugués (incluye títulos, subtítulos, encabezados de tabla, botones, etiquetas de formularios y textos vacíos).
 
-## Cambios por pantalla
+2. **Reemplazar los textos fijos por claves de traducción** en las pantallas del panel:
+   - `app.dashboard.tsx`, `app.sales.tsx`, `app.products.tsx`, `app.customers.tsx`, `app.costs-expenses.tsx`, `app.finance.tsx`, `app.alerts.tsx`, `app.automations.tsx`, `app.support.tsx`, `app.settings.tsx`
+   - También los `title` de cada pestaña del navegador.
 
-**Ventas (`app.sales.tsx`)**
-- El modal "Nueva venta" ya existe: conectar el submit para llamar `addSale({ date, product, qty, price, customer, channel, method })` y cerrar.
-- Botón "Exportar" queda como no-op visible (tooltip "Próximamente") — fuera de alcance.
+3. **Agregar el selector de idioma en Configuración** (tarjeta "Idioma y notificaciones"): dos botones Español / Português que llaman a la misma función `setLang` que ya usa la barra lateral. Al tocarlo, todo cambia al instante y queda guardado para la próxima visita.
 
-**Productos (`app.products.tsx`)**
-- Botón "Nuevo producto" → abre modal con formulario (nombre, categoría, precio, costo). Calcula margen automáticamente. `addProduct` en submit.
-- Cada fila: menú/acciones "Editar" y "Eliminar" → modal edición + confirm delete.
+4. **Formato de fechas y moneda**: usar el locale correspondiente (`es` / `pt-BR`) al mostrar fechas; los montos siguen en R$ como ahora.
 
-**Clientes (`app.customers.tsx`)**
-- Botón "Nuevo cliente" → modal (nombre, teléfono, email, canal). `addCustomer`.
-- Cada fila: "Editar" / "Eliminar".
+## Fuera de alcance
 
-**Costos y Gastos (`app.costs-expenses.tsx`)**
-- Botón "Nuevo movimiento" → modal (tipo costo/gasto, categoría, descripción, proveedor, monto, método, fijo sí/no). `addExpense`.
-- Tabs "Todos / Costos / Gastos" ya cambian el filtro visualmente — verificar que sigan funcionando con datos del store.
-- Cada fila: "Eliminar".
-
-**Finanzas (`app.finance.tsx`)**
-- No agrega botones nuevos: las tarjetas de KPI (income, costs, expenses, profit, margin) se recalculan desde el store en lugar de leer los mocks estáticos. Así al registrar una venta o un gasto los números se actualizan.
-
-## Fuera de alcance (esta pasada)
-
-- Alertas, Automatizaciones, Configuración, Soporte, Onboarding, Dashboard KPIs — se dejan como están.
-- Exportar / importar CSV.
-- Persistencia (recargar borra los cambios — comportamiento esperado).
-- Validación avanzada de formularios (solo `required` y `type=number`).
+- No se traducen los **datos de ejemplo** (nombres de productos, clientes, proveedores): son datos del negocio, no interfaz.
+- No se cambia diseño, colores, tipografía ni la disposición de ninguna pantalla.
+- No se toca la landing pública (tiene su propio sistema de idioma).
 
 ## Detalle técnico
 
-- Nuevo archivo `src/lib/mock-store.tsx` con `MockDataProvider` + `useMockStore()`. Tipos reutilizados de `mock-data.ts`.
-- IDs generados con `crypto.randomUUID()`.
-- Componente reutilizable `Modal` en `src/components/app/ui.tsx` (o inline en cada pantalla si ya existe patrón — Ventas ya tiene uno; extraerlo).
-- Confirmación de borrado con `window.confirm` para mantenerlo simple.
-- Finanzas: `useMemo` sobre `sales` y `expenses` para KPIs.
+- Se extiende el tipo `Dict` de `src/lib/app-i18n.tsx` con un objeto por pantalla; ambos idiomas comparten el mismo tipo, así TypeScript avisa si falta una traducción.
+- Cada pantalla usa `const { t } = useAppI18n()`.
+- El `head()` de cada ruta no puede leer el contexto: el título del navegador se mantiene fijo o se actualiza con un pequeño efecto dentro del componente.
+- Cambio incremental: primero el diccionario, luego pantalla por pantalla, sin tocar la lógica de datos ni el `mock-store`.
+
+## Qué probar al terminar
+
+- Cambiar idioma desde la barra lateral y desde Configuración: todas las pantallas cambian al instante.
+- Recargar la página: el idioma elegido se mantiene.
+- Los modales (nueva venta, producto, cliente, gasto) también aparecen traducidos.
