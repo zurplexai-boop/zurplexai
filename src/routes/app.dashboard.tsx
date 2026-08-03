@@ -9,6 +9,7 @@ import {
   alerts, businessName, channelSales, customersGrowth,
   dashboardStats, fmt, monthlySeries, topProducts,
 } from "@/lib/mock-data";
+import { useAppI18n } from "@/lib/app-i18n";
 
 export const Route = createFileRoute("/app/dashboard")({
   head: () => ({ meta: [{ title: "Panel — ZurplexAI" }] }),
@@ -25,11 +26,13 @@ const tooltipStyle = {
 
 function Dashboard() {
   const s = dashboardStats;
+  const { t } = useAppI18n();
+  const d = t.dashboard;
   return (
     <>
       <PageHeader
-        title={`Hola, ${businessName}`}
-        subtitle="Esta es la estructura de tu crecimiento."
+        title={`${d.hello}, ${businessName}`}
+        subtitle={d.subtitle}
         actions={
           <>
             <Link
@@ -37,43 +40,43 @@ function Dashboard() {
               className="hidden h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-medium text-primary-foreground hover:bg-primary-hover sm:inline-flex"
             >
               <ShoppingCart className="h-3.5 w-3.5" />
-              Registrar venta
+              {d.registerSale}
             </Link>
             <Link
               to="/app/costs-expenses"
               className="hidden h-9 items-center gap-1.5 rounded-md border border-border bg-surface px-3 text-xs font-medium hover:bg-card sm:inline-flex"
             >
               <Receipt className="h-3.5 w-3.5" />
-              Agregar gasto
+              {d.addExpense}
             </Link>
             <Link
               to="/app/products"
               className="hidden h-9 items-center gap-1.5 rounded-md border border-border bg-surface px-3 text-xs font-medium hover:bg-card md:inline-flex"
             >
               <PackageIcon className="h-3.5 w-3.5" />
-              Nuevo producto
+              {d.newProduct}
             </Link>
           </>
         }
       />
 
       <section className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-        <StatCard label="Ingresos del mes" value={fmt(s.income)} delta="+14% vs mes ant." tone="positive" />
-        <StatCard label="Gastos del mes" value={fmt(s.expenses)} delta="+8% vs mes ant." tone="warning" />
-        <StatCard label="Costos del mes" value={fmt(s.costs)} delta="+18% vs mes ant." tone="negative" />
-        <StatCard label="Lucro estimado" value={fmt(s.profit)} delta={`Margen ${s.margin}%`} tone="positive" />
-        <StatCard label="Clientes" value={String(s.customers)} delta="+14 este mes" tone="positive" />
+        <StatCard label={d.income} value={fmt(s.income)} delta={`+14% ${t.common.vsPrevMonth}`} tone="positive" />
+        <StatCard label={d.expenses} value={fmt(s.expenses)} delta={`+8% ${t.common.vsPrevMonth}`} tone="warning" />
+        <StatCard label={d.costs} value={fmt(s.costs)} delta={`+18% ${t.common.vsPrevMonth}`} tone="negative" />
+        <StatCard label={d.profit} value={fmt(s.profit)} delta={`${d.marginLabel} ${s.margin}%`} tone="positive" />
+        <StatCard label={d.customers} value={String(s.customers)} delta={d.newCustomersMonth} tone="positive" />
       </section>
 
       <section className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <StatCard label="Producto más vendido" value={s.topProduct} tone="default" />
-        <StatCard label="Producto menos vendido" value={s.worstProduct} tone="default" />
-        <StatCard label="Más rentable" value={s.mostProfitable} tone="default" />
-        <StatCard label="Alertas activas" value={String(s.activeAlerts)} tone="warning" />
+        <StatCard label={d.topProduct} value={s.topProduct} tone="default" />
+        <StatCard label={d.worstProduct} value={s.worstProduct} tone="default" />
+        <StatCard label={d.mostProfitable} value={s.mostProfitable} tone="default" />
+        <StatCard label={d.activeAlerts} value={String(s.activeAlerts)} tone="warning" />
       </section>
 
       <section className="mt-6 grid gap-4 lg:grid-cols-2">
-        <Card title="Ingresos vs gastos">
+        <Card title={d.incomeVsExpenses}>
           <div className="h-64">
             <ResponsiveContainer>
               <BarChart data={monthlySeries}>
@@ -82,14 +85,14 @@ function Dashboard() {
                 <YAxis {...chartAxis} />
                 <Tooltip contentStyle={tooltipStyle} />
                 <Legend wrapperStyle={{ fontSize: 12 }} />
-                <Bar dataKey="income" name="Ingresos" fill="var(--primary)" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="expenses" name="Gastos" fill="var(--warning)" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="income" name={t.finance.income} fill="var(--primary)" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="expenses" name={t.finance.expenses} fill="var(--warning)" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </Card>
 
-        <Card title="Ventas por canal">
+        <Card title={d.salesByChannel}>
           <div className="h-64">
             <ResponsiveContainer>
               <BarChart data={channelSales} layout="vertical" margin={{ left: 20 }}>
@@ -97,13 +100,13 @@ function Dashboard() {
                 <XAxis type="number" {...chartAxis} />
                 <YAxis type="category" dataKey="channel" {...chartAxis} width={90} />
                 <Tooltip contentStyle={tooltipStyle} />
-                <Bar dataKey="value" name="Ingresos" fill="var(--accent-sky)" radius={[0, 4, 4, 0]} />
+                <Bar dataKey="value" name={t.finance.income} fill="var(--accent-sky)" radius={[0, 4, 4, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </Card>
 
-        <Card title="Top 5 productos">
+        <Card title={d.top5}>
           <div className="h-64">
             <ResponsiveContainer>
               <BarChart data={topProducts}>
@@ -111,13 +114,13 @@ function Dashboard() {
                 <XAxis dataKey="name" {...chartAxis} tick={{ fontSize: 10 }} />
                 <YAxis {...chartAxis} />
                 <Tooltip contentStyle={tooltipStyle} />
-                <Bar dataKey="value" name="Ventas" fill="var(--primary)" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="value" name={d.sales} fill="var(--primary)" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </Card>
 
-        <Card title="Evolución de clientes">
+        <Card title={d.customersEvolution}>
           <div className="h-64">
             <ResponsiveContainer>
               <LineChart data={customersGrowth}>
@@ -140,10 +143,10 @@ function Dashboard() {
 
       <section className="mt-6">
         <Card
-          title="Alertas rápidas"
+          title={d.quickAlerts}
           actions={
             <Link to="/app/alerts" className="inline-flex items-center gap-1 text-xs text-accent-sky hover:underline">
-              Ver todas <ArrowUpRight className="h-3 w-3" />
+              {d.seeAll} <ArrowUpRight className="h-3 w-3" />
             </Link>
           }
         >
@@ -157,7 +160,7 @@ function Dashboard() {
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="text-sm font-medium">{a.title}</span>
                     <Badge tone={a.severity === "high" ? "danger" : a.severity === "medium" ? "warning" : "default"}>
-                      {a.severity === "high" ? "Alta" : a.severity === "medium" ? "Media" : "Baja"}
+                      {a.severity === "high" ? t.common.high : a.severity === "medium" ? t.common.medium : t.common.low}
                     </Badge>
                   </div>
                   <p className="mt-0.5 text-xs text-muted-foreground">{a.description}</p>
@@ -170,13 +173,13 @@ function Dashboard() {
 
       <section className="mt-6 flex flex-wrap gap-2 sm:hidden">
         <Link to="/app/sales" className="inline-flex h-10 flex-1 items-center justify-center gap-1.5 rounded-md bg-primary px-3 text-xs font-medium text-primary-foreground">
-          <Plus className="h-3.5 w-3.5" /> Venta
+          <Plus className="h-3.5 w-3.5" /> {d.shortSale}
         </Link>
         <Link to="/app/costs-expenses" className="inline-flex h-10 flex-1 items-center justify-center gap-1.5 rounded-md border border-border bg-surface px-3 text-xs font-medium">
-          <Plus className="h-3.5 w-3.5" /> Gasto
+          <Plus className="h-3.5 w-3.5" /> {d.shortExpense}
         </Link>
         <Link to="/app/products" className="inline-flex h-10 flex-1 items-center justify-center gap-1.5 rounded-md border border-border bg-surface px-3 text-xs font-medium">
-          <Plus className="h-3.5 w-3.5" /> Producto
+          <Plus className="h-3.5 w-3.5" /> {d.shortProduct}
         </Link>
       </section>
     </>
