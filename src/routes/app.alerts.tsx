@@ -3,6 +3,7 @@ import { AlertTriangle, ArrowRight } from "lucide-react";
 import { Badge, Card, PageHeader } from "@/components/app/ui";
 import { alerts } from "@/lib/mock-data";
 import { useAppI18n } from "@/lib/app-i18n";
+import { useMockStore } from "@/lib/mock-store";
 
 export const Route = createFileRoute("/app/alerts")({
   head: () => ({ meta: [{ title: "Alertas — ZurplexAI" }] }),
@@ -11,12 +12,17 @@ export const Route = createFileRoute("/app/alerts")({
 
 function AlertsPage() {
   const { t } = useAppI18n();
+  const { dataMode } = useMockStore();
+  const visibleAlerts = dataMode === "sample" ? alerts : [];
   return (
     <>
       <PageHeader title={t.alerts.title} subtitle={t.alerts.subtitle} />
       <Card>
         <ul className="divide-y divide-border">
-          {alerts.map((a) => {
+          {visibleAlerts.length === 0 && (
+            <li className="py-8 text-center text-sm text-muted-foreground">{t.common.noData}</li>
+          )}
+          {visibleAlerts.map((a) => {
             const tone = a.severity === "high" ? "danger" : a.severity === "medium" ? "warning" : "default";
             const ringColor =
               a.severity === "high" ? "bg-destructive/10 text-destructive ring-destructive/30"

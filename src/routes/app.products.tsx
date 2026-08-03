@@ -41,6 +41,9 @@ function ProductsPage() {
       />
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {products.length === 0 && (
+          <p className="py-8 text-center text-sm text-muted-foreground sm:col-span-2 lg:col-span-3">{t.common.noData}</p>
+        )}
         {products.map((p) => (
           <div key={p.id} className="rounded-xl border border-border bg-card p-4">
             <div className="flex items-start justify-between gap-2">
@@ -90,7 +93,9 @@ function ProductsPage() {
 
       <div className="mt-6">
         <Card title={p18.needAttention}>
-          {attention.length === 0 ? (
+          {products.length === 0 ? (
+            <p className="py-6 text-center text-sm text-muted-foreground">{t.common.noData}</p>
+          ) : attention.length === 0 ? (
             <p className="py-6 text-center text-sm text-muted-foreground">{p18.allHealthy}</p>
           ) : (
             <ul className="divide-y divide-border">

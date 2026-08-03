@@ -3,6 +3,7 @@ import { Check } from "lucide-react";
 import { Card, PageHeader } from "@/components/app/ui";
 import { businessName } from "@/lib/mock-data";
 import { useAppI18n, type AppLang } from "@/lib/app-i18n";
+import { useMockStore, type DemoDataMode } from "@/lib/mock-store";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/app/settings")({
@@ -17,7 +18,12 @@ const langOptions: { code: AppLang; label: string }[] = [
 
 function SettingsPage() {
   const { t, lang, setLang } = useAppI18n();
+  const { dataMode, setDataMode } = useMockStore();
   const s = t.settings;
+  const dataModeOptions: { mode: DemoDataMode; label: string }[] = [
+    { mode: "sample", label: s.sampleData },
+    { mode: "empty", label: s.emptyData },
+  ];
 
   return (
     <>
@@ -62,6 +68,32 @@ function SettingsPage() {
             </div>
             <Row label={s.emailNotif} value={s.enabled} />
             <Row label={s.marginAlerts} value={s.enabled} />
+          </div>
+        </Card>
+
+        <Card title={s.demoData}>
+          <p className="text-sm leading-relaxed text-muted-foreground">{s.demoDataDescription}</p>
+          <div
+            role="group"
+            aria-label={s.demoData}
+            className="mt-3 inline-flex overflow-hidden rounded-md border border-border bg-surface text-xs font-medium"
+          >
+            {dataModeOptions.map((o) => (
+              <button
+                key={o.mode}
+                type="button"
+                aria-pressed={dataMode === o.mode}
+                onClick={() => setDataMode(o.mode)}
+                className={cn(
+                  "px-3 py-2 transition-colors",
+                  dataMode === o.mode
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                {o.label}
+              </button>
+            ))}
           </div>
         </Card>
 

@@ -30,6 +30,7 @@ function FinancePage() {
     margin: totals.margin,
   };
   const bruto = s.income - s.costs;
+  const hasData = s.income !== 0 || s.costs !== 0 || s.expenses !== 0;
   return (
     <>
       <PageHeader title={f.title} subtitle={f.subtitle} />
@@ -56,7 +57,7 @@ function FinancePage() {
         <Card title={f.monthlyEvolution} className="lg:col-span-2">
           <div className="h-64">
             <ResponsiveContainer>
-              <AreaChart data={monthlySeries}>
+              <AreaChart data={hasData ? monthlySeries : []}>
                 <defs>
                   <linearGradient id="gi" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="var(--primary)" stopOpacity={0.5} />
@@ -84,10 +85,12 @@ function FinancePage() {
       <div className="mt-6">
         <Card title={f.monthSummary}>
           <p className="text-sm leading-relaxed text-muted-foreground">
+            {!hasData ? t.common.noData : <>
             {f.summary1} <span className="font-medium text-foreground">{fmt(s.income)}</span> {f.summary2}{" "}
             <span className="font-medium text-foreground">{fmt(s.profit)}</span>. {f.summary3}{" "}
             <span className="font-medium text-accent-sky">{s.margin}%</span>. {f.summary4}{" "}
             <span className="font-medium text-warning">18%</span>.
+            </>}
           </p>
         </Card>
       </div>
