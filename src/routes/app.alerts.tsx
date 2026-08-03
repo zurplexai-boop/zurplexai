@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { AlertTriangle, ArrowRight } from "lucide-react";
 import { Badge, Card, PageHeader } from "@/components/app/ui";
 import { alerts } from "@/lib/mock-data";
+import { useAppI18n } from "@/lib/app-i18n";
 
 export const Route = createFileRoute("/app/alerts")({
   head: () => ({ meta: [{ title: "Alertas — ZurplexAI" }] }),
@@ -9,9 +10,10 @@ export const Route = createFileRoute("/app/alerts")({
 });
 
 function AlertsPage() {
+  const { t } = useAppI18n();
   return (
     <>
-      <PageHeader title="Alertas" subtitle="Todo lo que tu negocio necesita mirar." />
+      <PageHeader title={t.alerts.title} subtitle={t.alerts.subtitle} />
       <Card>
         <ul className="divide-y divide-border">
           {alerts.map((a) => {
@@ -31,7 +33,7 @@ function AlertsPage() {
                       {a.title}
                     </span>
                     <Badge tone={tone}>
-                      {a.severity === "high" ? "Alta" : a.severity === "medium" ? "Media" : "Baja"}
+                      {a.severity === "high" ? t.common.high : a.severity === "medium" ? t.common.medium : t.common.low}
                     </Badge>
                     {!a.read && <span className="h-1.5 w-1.5 rounded-full bg-accent-sky" />}
                   </div>
@@ -39,7 +41,7 @@ function AlertsPage() {
                   <p className="mt-1 text-[11px] text-muted-foreground/70">{a.date}</p>
                 </div>
                 <button className="inline-flex shrink-0 items-center gap-1 rounded-md border border-border bg-surface px-2.5 py-1 text-xs text-muted-foreground hover:text-foreground">
-                  Ver <ArrowRight className="h-3 w-3" />
+                  {t.alerts.view} <ArrowRight className="h-3 w-3" />
                 </button>
               </li>
             );
