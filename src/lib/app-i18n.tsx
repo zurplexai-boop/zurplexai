@@ -53,6 +53,7 @@ type Dict = {
     method: string;
     vsPrevMonth: string;
     confirmDelete: string;
+    noData: string;
   };
   dashboard: {
     hello: string;
@@ -211,6 +212,10 @@ type Dict = {
     current: string;
     perMonth: string;
     switchTo: string;
+    demoData: string;
+    demoDataDescription: string;
+    sampleData: string;
+    emptyData: string;
     plans: { name: string; price: string; features: string[] }[];
   };
 };
@@ -273,6 +278,7 @@ const es: Dict = {
     method: "Método",
     vsPrevMonth: "vs mes ant.",
     confirmDelete: "¿Eliminar",
+    noData: "Todavía no hay datos.",
   },
   dashboard: {
     hello: "Hola",
@@ -447,6 +453,10 @@ const es: Dict = {
     current: "Actual",
     perMonth: "/mes",
     switchTo: "Cambiar a",
+    demoData: "Datos de demostración",
+    demoDataDescription: "Elegí si querés explorar el panel con ejemplos o empezar desde cero. Al cambiar de modo, los datos temporales se restablecen.",
+    sampleData: "Datos de ejemplo",
+    emptyData: "Modo vacío",
     plans: [
       {
         name: "Básico",
@@ -525,6 +535,7 @@ const pt: Dict = {
     method: "Método",
     vsPrevMonth: "vs mês ant.",
     confirmDelete: "Excluir",
+    noData: "Ainda não há dados.",
   },
   dashboard: {
     hello: "Olá",
@@ -699,6 +710,10 @@ const pt: Dict = {
     current: "Atual",
     perMonth: "/mês",
     switchTo: "Mudar para",
+    demoData: "Dados de demonstração",
+    demoDataDescription: "Escolha se quer explorar o painel com exemplos ou começar do zero. Ao mudar de modo, os dados temporários são redefinidos.",
+    sampleData: "Dados de exemplo",
+    emptyData: "Modo vazio",
     plans: [
       {
         name: "Básico",
