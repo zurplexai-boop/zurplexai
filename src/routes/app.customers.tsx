@@ -14,12 +14,14 @@ export const Route = createFileRoute("/app/customers")({
 const channels = ["WhatsApp", "Instagram", "Tienda física", "Sitio web", "Marketplace"];
 
 function CustomersPage() {
-  const { customers, addCustomer, updateCustomer, deleteCustomer } = useMockStore();
+  const { dataMode, customers, addCustomer, updateCustomer, deleteCustomer } = useMockStore();
   const { t } = useAppI18n();
   const c18 = t.customers;
   const [creating, setCreating] = useState(false);
   const [editing, setEditing] = useState<Customer | null>(null);
-  const hasCustomers = customers.length > 0;
+  const newCustomers = dataMode === "sample"
+    ? 14
+    : customers.filter((customer) => customer.lastPurchase.slice(0, 7) === new Date().toISOString().slice(0, 7)).length;
 
   return (
     <>
@@ -38,9 +40,9 @@ function CustomersPage() {
 
       <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <StatCard label={t.common.total} value={String(customers.length)} />
-        <StatCard label={c18.newThisMonth} value={hasCustomers ? "14" : "0"} tone="positive" />
-        <StatCard label={c18.recurring} value={hasCustomers ? "47" : "0"} />
-        <StatCard label={c18.inactive} value={hasCustomers ? "8" : "0"} tone="warning" />
+        <StatCard label={c18.newThisMonth} value={String(newCustomers)} tone="positive" />
+        <StatCard label={c18.recurring} value={dataMode === "sample" ? "47" : "0"} />
+        <StatCard label={c18.inactive} value={dataMode === "sample" ? "8" : "0"} tone="warning" />
       </section>
 
       <div className="mt-6">
