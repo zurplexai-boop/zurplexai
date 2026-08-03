@@ -34,6 +34,11 @@ function CostsPage() {
   const totalCostos = expenses.filter((e) => e.type === "costo").reduce((s, e) => s + e.amount, 0);
   const totalFijos = expenses.filter((e) => e.type === "gasto" && e.fixed).reduce((s, e) => s + e.amount, 0);
   const totalVar = expenses.filter((e) => e.type === "gasto" && !e.fixed).reduce((s, e) => s + e.amount, 0);
+  const categoryTotals = expenses.reduce<Record<string, number>>((totals, expense) => {
+    totals[expense.category] = (totals[expense.category] ?? 0) + expense.amount;
+    return totals;
+  }, {});
+  const topCategory = Object.entries(categoryTotals).sort((a, b) => b[1] - a[1])[0]?.[0] ?? "—";
 
   const filtered = expenses.filter((e) =>
     tab === "costs" ? e.type === "costo" : tab === "expenses" ? e.type === "gasto" : true,
@@ -58,7 +63,7 @@ function CostsPage() {
         <StatCard label={c.monthCosts} value={fmt(totalCostos)} tone="negative" />
         <StatCard label={c.fixedExpenses} value={fmt(totalFijos)} />
         <StatCard label={c.variableExpenses} value={fmt(totalVar)} tone="warning" />
-        <StatCard label={c.topCategory} value="Alquiler" hint={`+0% ${t.common.vsPrevMonth}`} />
+        <StatCard label={c.topCategory} value={topCategory} hint={expenses.length ? `+0% ${t.common.vsPrevMonth}` : undefined} />
       </section>
 
       <div className="mt-6 flex flex-wrap gap-2 border-b border-border">
@@ -97,6 +102,9 @@ function CostsPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
+                  {filtered.length === 0 && (
+                    <tr><td colSpan={7} className="py-8 text-center text-sm text-muted-foreground">{t.common.noData}</td></tr>
+                  )}
                   {filtered.map((e) => (
                     <tr key={e.id} className="hover:bg-surface/50">
                       <td className="py-2.5 pr-3 text-muted-foreground">{e.date}</td>
