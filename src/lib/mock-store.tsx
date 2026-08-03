@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import {
   products as initialProducts,
   sales as initialSales,
@@ -20,7 +20,11 @@ type NewCustomer = Omit<Customer, "id" | "total" | "lastPurchase"> & {
 };
 type NewExpense = Omit<Expense, "id">;
 
+export type DemoDataMode = "sample" | "empty";
+
 type StoreContext = {
+  dataMode: DemoDataMode;
+  setDataMode: (mode: DemoDataMode) => void;
   products: Product[];
   sales: Sale[];
   customers: Customer[];
@@ -61,6 +65,29 @@ export function MockStoreProvider({ children }: { children: ReactNode }) {
   const [sales, setSales] = useState<Sale[]>(initialSales);
   const [customers, setCustomers] = useState<Customer[]>(initialCustomers);
   const [expenses, setExpenses] = useState<Expense[]>(initialExpenses);
+  const [dataMode, setDataModeState] = useState<DemoDataMode>("sample");
+
+  const resetData = useCallback((mode: DemoDataMode) => {
+    setProducts(mode === "sample" ? [...initialProducts] : []);
+    setSales(mode === "sample" ? [...initialSales] : []);
+    setCustomers(mode === "sample" ? [...initialCustomers] : []);
+    setExpenses(mode === "sample" ? [...initialExpenses] : []);
+    setDataModeState(mode);
+  }, []);
+
+  useEffect(() => {
+    const stored = typeof window !== "undefined"
+      ? window.localStorage.getItem("zurplex-demo-data-mode")
+      : null;
+    if (stored === "empty") resetData("empty");
+  }, [resetData]);
+
+  const setDataMode = useCallback((mode: DemoDataMode) => {
+    resetData(mode);
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem("zurplex-demo-data-mode", mode);
+    }
+  }, [resetData]);
 
   const value = useMemo<StoreContext>(() => {
     const income = sales.reduce((s, x) => s + x.qty * x.price, 0);
@@ -70,6 +97,8 @@ export function MockStoreProvider({ children }: { children: ReactNode }) {
     const margin = income > 0 ? Math.round((profit / income) * 100) : 0;
 
     return {
+      dataMode,
+      setDataMode,
       products,
       sales,
       customers,
@@ -115,7 +144,7 @@ export function MockStoreProvider({ children }: { children: ReactNode }) {
       addExpense: (e) => setExpenses((prev) => [{ ...e, id: uid() }, ...prev]),
       deleteExpense: (id) => setExpenses((prev) => prev.filter((x) => x.id !== id)),
     };
-  }, [products, sales, customers, expenses]);
+  }, [dataMode, setDataMode, products, sales, customers, expenses]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
