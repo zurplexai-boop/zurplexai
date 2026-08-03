@@ -26,16 +26,42 @@ const tooltipStyle = {
 };
 
 function Dashboard() {
-  const { dataMode } = useMockStore();
-  const isEmpty = dataMode === "empty";
-  const s = isEmpty
-    ? { income: 0, expenses: 0, costs: 0, profit: 0, margin: 0, customers: 0, topProduct: "—", worstProduct: "—", mostProfitable: "—", activeAlerts: 0 }
+  const { dataMode, totals, products, sales, customers } = useMockStore();
+  const isEmptyMode = dataMode === "empty";
+  const productSales = sales.reduce<Record<string, number>>((byProduct, sale) => {
+    byProduct[sale.product] = (byProduct[sale.product] ?? 0) + sale.qty;
+    return byProduct;
+  }, {});
+  const rankedProducts = Object.entries(productSales).sort((a, b) => b[1] - a[1]);
+  const rankedMargins = [...products].sort((a, b) => b.margin - a.margin);
+  const s = isEmptyMode
+    ? {
+        income: totals.income,
+        expenses: totals.expensesTotal,
+        costs: totals.costs,
+        profit: totals.profit,
+        margin: totals.margin,
+        customers: customers.length,
+        topProduct: rankedProducts[0]?.[0] ?? "—",
+        worstProduct: rankedProducts.at(-1)?.[0] ?? "—",
+        mostProfitable: rankedMargins[0]?.name ?? "—",
+        activeAlerts: 0,
+      }
     : dashboardStats;
-  const dashboardMonthlySeries = isEmpty ? [] : monthlySeries;
-  const dashboardChannelSales = isEmpty ? [] : channelSales;
-  const dashboardTopProducts = isEmpty ? [] : topProducts;
-  const dashboardCustomersGrowth = isEmpty ? [] : customersGrowth;
-  const dashboardAlerts = isEmpty ? [] : alerts;
+  const dashboardMonthlySeries = isEmptyMode ? [] : monthlySeries;
+  const dashboardChannelSales = isEmptyMode
+    ? Object.entries(sales.reduce<Record<string, number>>((byChannel, sale) => {
+        byChannel[sale.channel] = (byChannel[sale.channel] ?? 0) + sale.qty * sale.price;
+        return byChannel;
+      }, {})).map(([channel, value]) => ({ channel, value }))
+    : channelSales;
+  const dashboardTopProducts = isEmptyMode
+    ? rankedProducts.slice(0, 5).map(([name, value]) => ({ name, value }))
+    : topProducts;
+  const dashboardCustomersGrowth = isEmptyMode && customers.length
+    ? [{ m: new Date().toLocaleString("default", { month: "short" }), customers: customers.length }]
+    : isEmptyMode ? [] : customersGrowth;
+  const dashboardAlerts = isEmptyMode ? [] : alerts;
   const { t } = useAppI18n();
   const d = t.dashboard;
   return (
@@ -71,11 +97,11 @@ function Dashboard() {
       />
 
       <section className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-        <StatCard label={d.income} value={fmt(s.income)} delta={isEmpty ? undefined : `+14% ${t.common.vsPrevMonth}`} tone="positive" />
-        <StatCard label={d.expenses} value={fmt(s.expenses)} delta={isEmpty ? undefined : `+8% ${t.common.vsPrevMonth}`} tone="warning" />
-        <StatCard label={d.costs} value={fmt(s.costs)} delta={isEmpty ? undefined : `+18% ${t.common.vsPrevMonth}`} tone="negative" />
+        <StatCard label={d.income} value={fmt(s.income)} delta={isEmptyMode ? undefined : `+14% ${t.common.vsPrevMonth}`} tone="positive" />
+        <StatCard label={d.expenses} value={fmt(s.expenses)} delta={isEmptyMode ? undefined : `+8% ${t.common.vsPrevMonth}`} tone="warning" />
+        <StatCard label={d.costs} value={fmt(s.costs)} delta={isEmptyMode ? undefined : `+18% ${t.common.vsPrevMonth}`} tone="negative" />
         <StatCard label={d.profit} value={fmt(s.profit)} delta={`${d.marginLabel} ${s.margin}%`} tone="positive" />
-        <StatCard label={d.customers} value={String(s.customers)} delta={isEmpty ? undefined : d.newCustomersMonth} tone="positive" />
+        <StatCard label={d.customers} value={String(s.customers)} delta={isEmptyMode ? undefined : d.newCustomersMonth} tone="positive" />
       </section>
 
       <section className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
