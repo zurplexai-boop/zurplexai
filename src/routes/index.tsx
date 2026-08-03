@@ -3,7 +3,7 @@ import {
   ArrowRight,
   ArrowUpRight,
   Check,
-  Globe,
+  BookOpen,
   Linkedin,
   User,
 } from "lucide-react";
@@ -103,7 +103,7 @@ function LanguageSwitcher() {
         aria-expanded={open}
         aria-label={`${t.a11y.languageSwitcher}. ${t.a11y.currentLanguage}: ${current.label}`}
       >
-        <Globe className="h-3.5 w-3.5" aria-hidden="true" />
+        <BookOpen className="h-3.5 w-3.5" aria-hidden="true" />
         <span className="hidden sm:inline">{current.short}</span>
       </button>
       {open && (
